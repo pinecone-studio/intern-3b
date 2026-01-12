@@ -8,6 +8,12 @@
     },
     {
       "path": "./apps/sample"
+    },
+    {
+      "path": "./apps/TeacherDoc-e2e"
+    },
+    {
+      "path": "./apps/TeacherDoc"
     }
   ]
 }
