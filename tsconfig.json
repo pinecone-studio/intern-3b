@@ -20,6 +20,9 @@
     },
     {
       "path": "./apps/mongodingo"
+    },
+    {
+      "path": ".//apps/unitok-mobile"
     }
   ]
 }
