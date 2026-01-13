@@ -1,11 +1,65 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 
+
+const mockLessons = [
+   {
+    id: "1",
+    name: "Магадлал ба Статистик",
+    subject: "math",
+    grade: "8",
+    term: "1",
+    lessons: [
+      { id: "1-1", name: "Үзэгдэл ба түүний магадлал", teacherCount: 3 },
+      { id: "1-2", name: "Магадлалын сонгодог тодорхойлолт", teacherCount: 2 },
+      { id: "1-3", name: "Бернуллийн туршилт", teacherCount: 1 },
+    ],
+  },
+  {
+    id: "2",
+    name: "Бүхэл тооны үйлдлүүд",
+    subject: "math",
+    grade: "8",
+    term: "1",
+    lessons: [
+      { id: "2-1", name: "Бүхэл тоог нэмэх хасах", teacherCount: 4 },
+      { id: "2-2", name: "Үлдэгдэлтэй хуваах", teacherCount: 2 },
+    ],
+  },
+  {
+    id: "3",
+    name: "Магадлал ба Статистик",
+    subject: "math",
+    grade: "8",
+    term: "1",
+    lessons: [
+      { id: "1-1", name: "Үзэгдэл ба түүний магадлал", teacherCount: 3 },
+      { id: "1-2", name: "Магадлалын сонгодог тодорхойлолт", teacherCount: 2 },
+      { id: "1-3", name: "Бернуллийн туршилт", teacherCount: 1 },
+    ],
+  },
+  {
+    id: "4",
+    name: "Бүхэл тооны үйлдлүүд",
+    subject: "math",
+    grade: "8",
+    term: "1",
+    lessons: [
+      { id: "2-1", name: "Бүхэл тоог нэмэх хасах", teacherCount: 4 },
+      { id: "2-2", name: "Үлдэгдэлтэй хуваах", teacherCount: 2 },
+    ],
+  },
+];
+
+
 export default function HomePage() {
+
   const [subject, setSubject] = useState('');
   const [grade, setGrade] = useState('');
   const [term, setTerm] = useState('');
+
 
   const isProgressComplete = subject && grade && term;
 
@@ -14,9 +68,15 @@ export default function HomePage() {
     setGrade('');
     setTerm('');
   };
+const filteredLessons = mockLessons.filter(
+  (lesson) =>
+    lesson.subject === subject &&
+    lesson.grade === grade &&
+    lesson.term === term
+);
 
   return (
-    <main className="max-w-6xl mx-auto px-6 py-10">
+    <main className="max-w-6xl mx-auto px-6 py-10 ">
       {/* Title */}
       <div className="px-3 py-px bg-emerald-50 w-fit rounded-[8px] border-emerald-200 border">
         <span className="text-emerald-700 opacity-70 font-extrabold ">
@@ -157,14 +217,49 @@ export default function HomePage() {
 
       {/* Lessons map lah gazar */}
       {isProgressComplete ? (
-        <div className="mt-10 bg-gray-50 border rounded-xl p-10 text-center text-gray-500">
-          Та бүх талбарыг амжилттай сонгосон байна!
-        </div>
-      ) : (
-        <div className="mt-10 bg-gray-50 border rounded-xl p-10 text-center text-gray-500">
-          Та бүх сонголтоо хийгээгүй байна.
-        </div>
-      )}
+  <div className="mt-20">
+    {filteredLessons.length > 0 ? (
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        {filteredLessons.slice(0,2).map((lesson) => (
+                   <div
+  key={lesson.id}
+                    className="bg-white rounded-3xl border border-slate-100 shadow-[0_4px_20px_rgb(0,0,0,0.01)] overflow-hidden transition-all duration-300 hover:border-[#B0DAC8] hover:shadow-[0_12px_40px_rgb(176,218,200,0.15)] p-8 cursor-pointer flex items-center justify-between group bg-white border-slate-100/60"
+                    // onClick={() => setSelectedMainTopic(lesson.id)}
+                  >
+                    <div>
+                      <h4 className="text-xl font-bold text-slate-900 mb-2 group-hover:text-[#5E8C78] transition-colors">{lesson.name}</h4>
+                      <div className="flex items-center gap-2 text-sm text-slate-400 font-medium">
+                        {/* <BookOpen size={14} /> */}
+                        {lesson.lessons.length} дэд хичээл агуулсан
+                      </div>
+                    </div>
+                    <div className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-300 group-hover:bg-[#B0DAC8] group-hover:text-[#2D4F3F] transition-all transform group-hover:translate-x-1">
+                      {/* <ChevronRight size={20} /> */}
+                    </div>
+                  </div>
+        ))}
+      </div>
+    ) : (
+      <div className="bg-gray-50 border rounded-xl p-10 text-center text-gray-500">
+        Тохирох хичээл олдсонгүй
+      </div>
+    )}
+  </div>
+) : (
+   <div className="flex flex-col items-center justify-center py-32 text-center space-y-8">
+              <div className="relative">
+                <div className="absolute inset-0 bg-[#B0DAC8] blur-3xl opacity-20 animate-pulse" />
+                <div className="relative w-24 h-24 rounded-3xl bg-white border border-slate-100 shadow-sm flex items-center justify-center text-[#B0DAC8]">
+                  {/* <Sparkles size={40} /> */}
+                </div>
+              </div>
+              <div className="max-w-sm space-y-3">
+                <p className="text-2xl font-black text-slate-900 tracking-tight">Шүүлтүүрээ ашиглана уу</p>
+                <p className="text-slate-400 font-medium leading-relaxed">Хайлтаа эхлүүлэхийн тулд хичээл, анги болон улирлын мэдээллээ сонгоно уу.</p>
+              </div>
+            </div>
+)}
+
     </main>
   );
 }
