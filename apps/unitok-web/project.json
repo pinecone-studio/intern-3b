@@ -1,0 +1,9 @@
+{
+  "name": "unitok-web",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "/apps/unitok-web",
+  "projectType": "application",
+  "tags": ["[\"web\"", "\"frontend\"", "\"unitok\"]"],
+  "// targets": "to see all targets run: nx show project unitok-web --web",
+  "targets": {}
+}

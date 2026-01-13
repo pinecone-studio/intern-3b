@@ -301,11 +301,64 @@ const mockLessons = [
   },
 ];
 
+
+const mockLessons = [
+   {
+    id: "1",
+    name: "Магадлал ба Статистик",
+    subject: "math",
+    grade: "8",
+    term: "1",
+    lessons: [
+      { id: "1-1", name: "Үзэгдэл ба түүний магадлал", teacherCount: 3 },
+      { id: "1-2", name: "Магадлалын сонгодог тодорхойлолт", teacherCount: 2 },
+      { id: "1-3", name: "Бернуллийн туршилт", teacherCount: 1 },
+    ],
+  },
+  {
+    id: "2",
+    name: "Бүхэл тооны үйлдлүүд",
+    subject: "math",
+    grade: "8",
+    term: "1",
+    lessons: [
+      { id: "2-1", name: "Бүхэл тоог нэмэх хасах", teacherCount: 4 },
+      { id: "2-2", name: "Үлдэгдэлтэй хуваах", teacherCount: 2 },
+    ],
+  },
+  {
+    id: "3",
+    name: "Магадлал ба Статистик",
+    subject: "math",
+    grade: "8",
+    term: "1",
+    lessons: [
+      { id: "1-1", name: "Үзэгдэл ба түүний магадлал", teacherCount: 3 },
+      { id: "1-2", name: "Магадлалын сонгодог тодорхойлолт", teacherCount: 2 },
+      { id: "1-3", name: "Бернуллийн туршилт", teacherCount: 1 },
+    ],
+  },
+  {
+    id: "4",
+    name: "Бүхэл тооны үйлдлүүд",
+    subject: "math",
+    grade: "8",
+    term: "1",
+    lessons: [
+      { id: "2-1", name: "Бүхэл тоог нэмэх хасах", teacherCount: 4 },
+      { id: "2-2", name: "Үлдэгдэлтэй хуваах", teacherCount: 2 },
+    ],
+  },
+];
+
+
 export default function HomePage() {
+
   const [subject, setSubject] = useState('');
   const [grade, setGrade] = useState('');
   const [term, setTerm] = useState('');
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
+
 
   const isProgressComplete = subject && grade && term;
 
@@ -314,6 +367,12 @@ export default function HomePage() {
     setGrade('');
     setTerm('');
   };
+const filteredLessons = mockLessons.filter(
+  (lesson) =>
+    lesson.subject === subject &&
+    lesson.grade === grade &&
+    lesson.term === term
+);
 
   const filteredLessons = mockLessons.filter(
     (lesson) =>
