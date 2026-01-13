@@ -23,6 +23,12 @@
     },
     {
       "path": ".//apps/unitok-mobile"
+    },
+    {
+      "path": "./apps/unitok-web-e2e"
+    },
+    {
+      "path": ".//apps/unitok-web"
     }
   ]
 }
