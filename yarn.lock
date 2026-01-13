@@ -2359,6 +2359,19 @@
     tree-kill "1.2.2"
     tslib "^2.3.0"
 
+"@nx/detox@22.3.3":
+  version "22.3.3"
+  resolved "https://registry.yarnpkg.com/@nx/detox/-/detox-22.3.3.tgz#fffe9992c9a4c0a5f65984fbee029c42d45d644f"
+  integrity sha512-gSsdNk3ojcY8D6BT4K6pFbs/lR4Wq4QMGx25tSC6/+te70gnQrf3N48q6j8Y6cHv5KraSNBXI3LLMyDqf9hMLg==
+  dependencies:
+    "@nx/devkit" "22.3.3"
+    "@nx/eslint" "22.3.3"
+    "@nx/jest" "22.3.3"
+    "@nx/js" "22.3.3"
+    "@nx/react" "22.3.3"
+    semver "^7.6.3"
+    tslib "^2.3.0"
+
 "@nx/devkit@22.3.3":
   version "22.3.3"
   resolved "https://registry.yarnpkg.com/@nx/devkit/-/devkit-22.3.3.tgz#fd90775b987fea4eed7aabf498c8e51c88453819"
@@ -2399,6 +2412,24 @@
     semver "^7.6.3"
     tslib "^2.3.0"
     typescript "~5.9.2"
+
+"@nx/expo@^22.3.3":
+  version "22.3.3"
+  resolved "https://registry.yarnpkg.com/@nx/expo/-/expo-22.3.3.tgz#889c54f491212614f0bc7449e2324058bf1bc4fd"
+  integrity sha512-uI02WcohGZXxDd0toQoLUED3uGyd+jM/t/qVPoD5ixf9N8AN/ZvLGuH8GH62qUg+/kZ5OLjl3xHrzxm6PmLZbQ==
+  dependencies:
+    "@nx/devkit" "22.3.3"
+    "@nx/eslint" "22.3.3"
+    "@nx/js" "22.3.3"
+    "@nx/react" "22.3.3"
+    enhanced-resolve "^5.8.3"
+    picocolors "^1.1.0"
+    semver "^7.6.3"
+    tsconfig-paths "^4.1.2"
+    tslib "^2.3.0"
+  optionalDependencies:
+    "@nx/detox" "22.3.3"
+    "@nx/rollup" "22.3.3"
 
 "@nx/jest@22.3.3":
   version "22.3.3"
@@ -6304,7 +6335,7 @@ end-of-stream@^1.1.0, end-of-stream@^1.4.1:
   dependencies:
     once "^1.4.0"
 
-enhanced-resolve@^5.0.0, enhanced-resolve@^5.17.4, enhanced-resolve@^5.7.0:
+enhanced-resolve@^5.0.0, enhanced-resolve@^5.17.4, enhanced-resolve@^5.7.0, enhanced-resolve@^5.8.3:
   version "5.18.4"
   resolved "https://registry.yarnpkg.com/enhanced-resolve/-/enhanced-resolve-5.18.4.tgz#c22d33055f3952035ce6a144ce092447c525f828"
   integrity sha512-LgQMM4WXU3QI+SYgEc2liRgznaD5ojbmY3sb8LxyguVkIg5FxdpTkvk72te2R38/TGKxH634oLxXRGY6d7AP+Q==
