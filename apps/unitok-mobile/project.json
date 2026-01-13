@@ -1,0 +1,9 @@
+{
+  "name": "unitok-mobile",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "/apps/unitok-mobile/src",
+  "projectType": "application",
+  "tags": ["scope:unitok type:mobile"],
+  "// targets": "to see all targets run: nx show project unitok-mobile --web",
+  "targets": {}
+}
