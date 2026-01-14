@@ -6,19 +6,13 @@
     "eas-build-post-install": "cd ../../ && node tools/scripts/eas-build-post-install.mjs . /apps/unitok-mobile"
   },
   "dependencies": {
-    "@expo/metro-config": "*",
-    "@testing-library/react-native": "*",
     "expo": "*",
     "expo-splash-screen": "*",
     "expo-status-bar": "*",
     "expo-system-ui": "*",
-    "jest-expo": "*",
-    "metro-config": "*",
-    "metro-resolver": "*",
-    "react": "*",
-    "react-native": "*",
+    "react": "19.1.0",
+    "react-native": "0.81.5",
     "react-native-svg": "*",
-    "react-native-svg-transformer": "*",
-    "react-native-web": "*"
+    "react-native-svg-transformer": "*"
   }
 }
