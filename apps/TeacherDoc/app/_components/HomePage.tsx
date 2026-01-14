@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Button } from './ui/CustomUI';
+import AddTopicModal from './AddModule';
+import AddSubModule from './AddSubModule';
+
+
 
 const mockLessons = [
   {
@@ -60,6 +64,10 @@ export default function HomePage() {
   const [grade, setGrade] = useState('');
   const [term, setTerm] = useState('');
   const [selectedTopicId, setSelectedTopicId] = useState<string | null>(null);
+  const [isAddModuleOpen, setIsAddModuleOpen] = useState(false);
+  const [isAddSubModuleOpen, setIsAddSubModuleOpen] = useState(false);
+ const [mockLessonsState, setMockLessonsState] = useState(mockLessons);
+
 
   const isProgressComplete = subject && grade && term;
 
@@ -253,9 +261,12 @@ export default function HomePage() {
             <h2 className="text-2xl font-black text-slate-800">
               Ерөнхий сэдвүүд
             </h2>
-            <span className="bg-slate-100 text-slate-500 px-3 py-1 rounded-lg text-xs font-bold">
-              {filteredLessons.length} үр дүн
-            </span>
+                   <button 
+                      onClick={() => setIsAddModuleOpen(true)}
+                      className="bg-green-800 text-white px-6 py-3 rounded-2xl font-black text-sm hover:bg-green-700 transition-all flex items-center gap-2 shadow-lg shadow-green-100 active:scale-95"
+                    >
+                      <span>+ Сэдэв нэмэх</span>
+                    </button>
           </div>
 
           {filteredLessons.length > 0 ? (
@@ -288,24 +299,32 @@ export default function HomePage() {
         </div>
       )}
 
-      {/* Selected topic details (энэ хэсэг чинь хэвээрээ үлдэж байгаа) */}
+    
       {selectedTopicId && selectedTopic && (
         <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 mt-10">
-          <div className="flex items-center gap-4 mb-8">
-            <button
+          <div className="flex items-center   w-full px-8 items-center justify-between gap-4 mb-8">
+          
+            <div>
+                <button
               onClick={() => setSelectedTopicId(null)}
               className="p-3 rounded-full bg-slate-100 text-slate-600 hover:bg-emerald-600 hover:text-white transition-all shadow-sm"
             >
               {/* <ICONS.ArrowLeft className="w-5 h-5" /> */}
             </button>
-            <div>
               <h2 className="text-3xl font-black text-slate-900">
                 {selectedTopic.name}
               </h2>
               <p className="text-slate-500 font-medium">
                 Нийт {selectedTopic.lessons.length} дэд сэдэв байна
               </p>
+               
             </div>
+              <button 
+                      onClick={() => setIsAddSubModuleOpen(true)}
+                      className="bg-green-800 text-white px-6 py-3 rounded-2xl font-black text-sm hover:bg-green-700 transition-all flex items-center gap-2 shadow-lg shadow-green-100 active:scale-95"
+                    >
+                      <span>+ Сэдэв нэмэх</span>
+                    </button>
           </div>
 
           <div className="lg:col-span-2 space-y-4">
@@ -371,6 +390,34 @@ export default function HomePage() {
           </div>
         </div>
       )}
+      {
+        isAddSubModuleOpen&&(
+          <AddSubModule
+          selectedTopic={selectedTopic}
+          subject={subject}
+    grade={grade}
+    term={term}
+    onClose={() => setIsAddSubModuleOpen(false)}
+    onAddTopic={(newTopic) => {
+      setMockLessonsState((prev) => [...prev, newTopic]);
+    }}
+          />
+        )
+      }
+     {isAddModuleOpen && (
+  <AddTopicModal
+
+    subject={subject}
+    grade={grade}
+    term={term}
+    onClose={() => setIsAddModuleOpen(false)}
+    onAddTopic={(newTopic) => {
+      setMockLessonsState((prev) => [...prev, newTopic]);
+    }}
+  />
+)}
+
+
     </main>
   );
 }
