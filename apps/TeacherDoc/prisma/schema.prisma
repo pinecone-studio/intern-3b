@@ -1,10 +1,13 @@
 generator client {
   provider = "prisma-client-js"
   url      = env("DATABASE_URL")
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Module {
@@ -34,6 +37,13 @@ model User {
   name     String
   role     String
   lessonId String
+  id       String  @id @default(cuid())
+  name     String
+  role     String
+  lessonId String?
+  password String
+  schoolId String?
+  number   Int?    @unique
 }
 
 model Lesson {
