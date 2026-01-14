@@ -1,0 +1,130 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model CareerOpportunity {
+  id        String          @id
+  title     String
+  level     String
+  type      OpportunityType
+  salaryMN  String
+  salaryINT String
+  majorId   String
+  Major     Major           @relation(fields: [majorId], references: [id])
+
+  @@index([majorId])
+}
+
+model Lesson {
+  id            String          @id
+  title         String
+  content       String
+  xp            Int             @default(20)
+  skillId       String
+  Skill         Skill           @relation(fields: [skillId], references: [id])
+  LessonHistory LessonHistory[]
+}
+
+model LessonHistory {
+  id        String   @id
+  userId    String
+  lessonId  String
+  createdAt DateTime @default(now())
+  Lesson    Lesson   @relation(fields: [lessonId], references: [id])
+  User      User     @relation(fields: [userId], references: [id])
+
+  @@unique([userId, lessonId])
+}
+
+model Major {
+  id                String              @id
+  name              String
+  category          String              @default("Tech")
+  description       String
+  suitableFor       String
+  advantages        String
+  challenges        String
+  demandLevel       DemandLevel
+  futureScope       FutureScope
+  CareerOpportunity CareerOpportunity[]
+  Skill             Skill[]
+  StudyPath         StudyPath[]
+  User              User[]
+}
+
+model Progress {
+  id      String @id
+  userId  String
+  skillId String
+  percent Int    @default(0)
+  Skill   Skill  @relation(fields: [skillId], references: [id])
+  User    User   @relation(fields: [userId], references: [id])
+
+  @@unique([userId, skillId])
+}
+
+model Skill {
+  id       String     @id
+  name     String
+  level    Level
+  majorId  String
+  Lesson   Lesson[]
+  Progress Progress[]
+  Major    Major      @relation(fields: [majorId], references: [id])
+
+  @@index([majorId])
+}
+
+model StudyPath {
+  id           String @id
+  title        String
+  location     String
+  duration     String
+  requirements String
+  majorId      String
+  Major        Major  @relation(fields: [majorId], references: [id])
+
+  @@index([majorId])
+}
+
+model User {
+  id            String          @id
+  email         String          @unique
+  password      String
+  createdAt     DateTime        @default(now())
+  xp            Int             @default(0)
+  streak        Int             @default(0)
+  majorId       String?
+  LessonHistory LessonHistory[]
+  Progress      Progress[]
+  Major         Major?          @relation(fields: [majorId], references: [id])
+}
+
+enum DemandLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum FutureScope {
+  STABLE
+  GROWING
+  EXPLOSIVE
+}
+
+enum Level {
+  BEGINNER
+  INTERMEDIATE
+  ADVANCED
+}
+
+enum OpportunityType {
+  FREELANCE
+  REMOTE
+  STARTUP
+}
