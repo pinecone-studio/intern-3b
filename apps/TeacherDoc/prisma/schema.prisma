@@ -1,48 +1,46 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
-  provider = "prisma-client-js"
-  url = env("DATABASE_URL")
-
+  provider        = "prisma-client-js"
+  previewFeatures = ["driverAdapters"]
 }
 
 datasource db {
   provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Module {
-  id String @id @default(cuid())
-  name String
+  id         String @id @default(cuid())
+  name       String
   semesterId String
-  lessonId String
-  gradeId String
+  lessonId   String
+  gradeId    String
 }
 
 model SubModule {
-  id String @id @default(cuid())
-  name String
+  id       String @id @default(cuid())
+  name     String
   moduleId String
 }
 
 model Document {
-  richText String
+  richText    String
   subModuleId String
-  moduleId String
-  teacherId String
-  id String @id @default(cuid())
+  moduleId    String
+  teacherId   String
+  id          String @id @default(cuid())
 }
 
 model User {
-  id String @id @default(cuid())
-  role String
-  lessonId String
+  id       String  @id @default(cuid())
+  name     String
+  role     String
+  lessonId String?
+  password String
+  schoolId String?
+  number   Int?    @unique
 }
 
 model Lesson {
-  id String @id @default(cuid())
+  id   String @id @default(cuid())
   name String
 }

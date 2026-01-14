@@ -46,5 +46,8 @@
     "eslint.config.js",
     "eslint.config.cjs",
     "eslint.config.mjs"
+  ],
+  "files": [
+    "lib/prismaClient.ts"
   ]
 }
