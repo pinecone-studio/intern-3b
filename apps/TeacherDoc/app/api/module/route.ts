@@ -2,10 +2,11 @@ import prismaClient from '@/lib/prismaClient';
 import { NextResponse } from 'next/server';
 
 
+
 const prisma = prismaClient;
 
 export async function GET() {
-  console.log("Database URL:", process.env.DATABASE_URL ? "DB" : "No DB"); // Debugging line to check the DATABASE_URL
+
   try {
     const modules = await prisma.module.findMany();
     return NextResponse.json(modules, { status: 200 });
