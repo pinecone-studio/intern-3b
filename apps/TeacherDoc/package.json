@@ -3,12 +3,19 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "@ckeditor/ckeditor5-build-classic": "^44.3.0",
+    "@ckeditor/ckeditor5-react": "^11.0.1",
+    "@headlessui/react": "^2.2.9",
     "@prisma/client": "^6.2.1",
+    "@tiptap/extension-image": "^3.15.3",
+    "@tiptap/react": "^3.15.3",
+    "@tiptap/starter-kit": "^3.15.3",
     "dotenv": "^17.2.3",
     "next": "~16.0.1",
     "prisma": "^7.2.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-quill-new": "^3.7.0"
   },
   "devDependencies": {
     "prisma": "^6.2.1"

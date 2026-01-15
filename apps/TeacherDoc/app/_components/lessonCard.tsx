@@ -25,11 +25,7 @@ export function LessonCard() {
         <Button className="mt-4 ">Хичээл харах</Button>
       </div>
 
-      <button className="cursor-pointer flex flex-col  w-[370px] rounded border justify-center bg-white items-center h-[280px] ">
-        <div className="px-8 py-5 bg-emerald-400 rounded-full">
-          <span className="font-extrabold text-4xl">+</span>
-        </div>
-      </button>
+
     </div>
   );
 }
