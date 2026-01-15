@@ -4,12 +4,22 @@
   "private": true,
   "dependencies": {
     "@prisma/client": "^7.2.0",
+    "@radix-ui/react-progress": "^1.1.8",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-tabs": "^1.1.13",
+    "@vercel/analytics": "^1.6.1",
     "bcrypt": "^6.0.0",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "framer-motion": "^12.26.2",
     "jsonwebtoken": "^9.0.3",
+    "lucide-react": "^0.562.0",
     "next": "~16.0.1",
     "prisma": "^7.2.0",
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.4.0",
+    "tailwindcss-animate": "^1.0.7"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

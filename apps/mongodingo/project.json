@@ -1,9 +1,32 @@
 {
   "name": "mongodingo",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "apps/mongodingo",
   "projectType": "application",
-  "tags": [],
-  "// targets": "to see all targets run: nx show project mongodingo --web",
-  "targets": {}
+  "sourceRoot": "apps/mongodingo",
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/mongodingo"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/mongodingo"
+        },
+        "production": {}
+      }
+    },
+    "dev": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "mongodingo:build",
+        "dev": true,
+        "port": 3000,
+        "args": ["--no-turbo"]
+      }
+    }
+  }
 }
