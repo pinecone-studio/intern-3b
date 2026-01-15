@@ -1,3 +1,4 @@
+import AddButton from '@/app/_components/AddLessonBtn';
 import { LessonCard } from '@/app/_components/lessonCard';
 
 export default function SubModulePage() {
@@ -24,8 +25,9 @@ export default function SubModulePage() {
         </span>
       </div>
 
-      <div className="mx-20">
+      <div className="mx-20 flex flex-wrap gap-10 ">
         <LessonCard />
+        <AddButton />
       </div>
     </div>
   );
