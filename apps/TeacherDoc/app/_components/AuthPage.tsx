@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import SignInForm from './SignInForm';
+import { SignUpForm } from './SignUpForm';
 
 export default function AuthPage() {
   const [isSignUp, setIsSignUp] = useState(false);

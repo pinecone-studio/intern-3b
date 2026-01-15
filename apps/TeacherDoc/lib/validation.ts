@@ -1,4 +1,4 @@
-export function validatePassword(password: string): {
+export function ValidatePassword(password: string): {
   isValid: boolean;
   error?: string;
 } {
