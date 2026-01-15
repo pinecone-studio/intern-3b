@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import FormInput from './FormInput';
 import FormButton from './FormButton';
+import { waitForDebugger } from 'inspector';
 
 export default function SignInForm() {
   const [formData, setFormData] = useState({
@@ -9,7 +10,7 @@ export default function SignInForm() {
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     const newErrors: Record<string, string> = {};
     if (!formData.phoneNumber.trim()) {
@@ -24,7 +25,10 @@ export default function SignInForm() {
     }
     setLoading(true);
     //Yg ene hesegt db ruu nemdeg logic orj irne e.g axiosInstance
-    setLoading(false);
+
+    // await new Promise((resolve) => setTimeout(resolve, 1500));
+    // console.log('Sign up:', formData);
+    // setLoading(false);
   };
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => {
