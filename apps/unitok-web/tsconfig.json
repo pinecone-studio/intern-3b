@@ -24,6 +24,10 @@
     "rootDir": "."
   },
   "include": [
+    "components/**/*",
+    "pages/**/*",
+    "lib/**/*",
+    "**/*.tsx",
     "app/**/*.ts",
     "app/**/*.tsx",
     "app/**/*.js",
