@@ -1,10 +1,10 @@
-"use client"
+'use client';
 
-import Link from "next/link"
-import { Heart, Flame, Gem, Zap, Crown, User } from "lucide-react"
-import { motion } from "framer-motion"
+import Link from 'next/link';
+import { Heart, Flame, Gem, Zap, Crown, User } from 'lucide-react';
+import { motion } from 'framer-motion';
 
-export function LearningHeader() {
+export function LearningHeader({ user }: { user: any }) {
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}
@@ -42,7 +42,9 @@ export function LearningHeader() {
 
           <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
             <Crown className="w-4 h-4 text-amber-500 fill-amber-500" />
-            <span className="text-sm font-semibold text-amber-500">Level 8</span>
+            <span className="text-sm font-semibold text-amber-500">
+              Level 8
+            </span>
           </div>
 
           <Link href="/profile">
@@ -57,5 +59,5 @@ export function LearningHeader() {
         </div>
       </div>
     </motion.header>
-  )
+  );
 }

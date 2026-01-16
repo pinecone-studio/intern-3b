@@ -1,46 +1,46 @@
-"use client"
+'use client';
 
-import { Card } from "@/components/ui/card"
-import { Progress } from "@/components/ui/progress"
-import { motion } from "framer-motion"
-import { Target, Award, BookOpen, TrendingUp } from "lucide-react"
+import { Card } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
+import { motion } from 'framer-motion';
+import { Target, Award, BookOpen, TrendingUp } from 'lucide-react';
 
 const stats = [
   {
     icon: Target,
-    label: "Daily Goal",
-    labelMn: "Өдрийн зорилго",
-    value: "3/5 lessons",
+    label: 'Daily Goal',
+    labelMn: 'Өдрийн зорилго',
+    value: '3/5 lessons',
     progress: 60,
-    color: "text-primary",
+    color: 'text-primary',
   },
   {
     icon: Award,
-    label: "Achievements",
-    labelMn: "Амжилтууд",
-    value: "12/50",
+    label: 'Achievements',
+    labelMn: 'Амжилтууд',
+    value: '12/50',
     progress: 24,
-    color: "text-amber-500",
+    color: 'text-amber-500',
   },
   {
     icon: BookOpen,
-    label: "Completed Lessons",
-    labelMn: "Дууссан хичээл",
-    value: "45",
+    label: 'Completed Lessons',
+    labelMn: 'Дууссан хичээл',
+    value: '45',
     progress: 100,
-    color: "text-emerald-500",
+    color: 'text-emerald-500',
   },
   {
     icon: TrendingUp,
-    label: "This Week",
-    labelMn: "Энэ долоо хоног",
-    value: "+320 XP",
+    label: 'This Week',
+    labelMn: 'Энэ долоо хоног',
+    value: '+320 XP',
     progress: 80,
-    color: "text-blue-500",
+    color: 'text-blue-500',
   },
-]
+];
 
-export function ProgressStatsCard() {
+export function ProgressStatsCard({ user }: { user: any }) {
   return (
     <Card className="p-6 bg-card border-border">
       <h3 className="text-xl font-bold mb-6">Таны явц</h3>
@@ -54,11 +54,15 @@ export function ProgressStatsCard() {
             transition={{ delay: index * 0.1 }}
           >
             <div className="flex items-center gap-3 mb-2">
-              <div className={`w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center`}>
+              <div
+                className={`w-8 h-8 rounded-lg bg-muted/50 flex items-center justify-center`}
+              >
                 <stat.icon className={`w-4 h-4 ${stat.color}`} />
               </div>
               <div className="flex-grow">
-                <div className="text-sm text-muted-foreground">{stat.labelMn}</div>
+                <div className="text-sm text-muted-foreground">
+                  {stat.labelMn}
+                </div>
                 <div className="font-semibold">{stat.value}</div>
               </div>
             </div>
@@ -67,5 +71,5 @@ export function ProgressStatsCard() {
         ))}
       </div>
     </Card>
-  )
+  );
 }

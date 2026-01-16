@@ -1,14 +1,16 @@
 import { HomepageHeader } from '@/components/homepage-header';
 import { HomepageFooter } from '@/components/homepage-footer';
 import { MajorCard } from '@/components/major-card';
-import { majors } from '@/lib/majors-data';
+import { getMajors } from '@/lib/data';
+import { Major } from '@/lib/types';
 
 export const metadata = {
   title: 'Tech Majors | Mongodingo',
   description: 'Explore technology career paths and majors',
 };
 
-export default function MajorsPage() {
+export default async function MajorsPage() {
+  const majors = await getMajors();
   return (
     <div className="min-h-screen">
       <HomepageHeader />
@@ -25,7 +27,7 @@ export default function MajorsPage() {
           </div>
 
           <div className="grid md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
-            {majors.map((major, index) => (
+            {majors.map((major: Major, index: number) => (
               <MajorCard key={major.id} major={major} index={index} />
             ))}
           </div>

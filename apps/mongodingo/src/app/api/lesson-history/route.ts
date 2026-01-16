@@ -31,11 +31,14 @@ export async function POST(req: Request) {
       );
     }
 
-    // Create or return existing (avoid duplicates)
     const saved = await prisma.lessonHistory.upsert({
       where: { userId_lessonId: { userId, lessonId } },
-      update: {}, // no changes needed
-      create: { userId, lessonId },
+      update: {},
+      create: {
+        id: `${userId}_${lessonId}`,
+        userId,
+        lessonId,
+      },
     });
 
     return Response.json(saved, { status: 201 });

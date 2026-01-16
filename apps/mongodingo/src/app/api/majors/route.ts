@@ -1,8 +1,13 @@
 import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
   try {
-    const res = await prisma.major.findMany();
+    const res = await prisma.major.findMany({
+      include: {
+        Skill: true,
+      },
+    });
     return Response.json({ res }, { status: 200 });
   } catch (error) {
     console.error(error);
@@ -13,20 +18,64 @@ export async function GET(req: Request) {
 export async function POST(req: Request) {
   try {
     const {
+      id,
       name,
-      category,
+      nameMn,
       description,
+      descriptionMn,
+      overview,
+      overviewMn,
+      salary,
+      salaryMn,
+      jobOpenings,
+      jobOpeningsMn,
+      icon,
+      demandLabel,
+      category,
       suitableFor,
       advantages,
       challenges,
       demandLevel,
       futureScope,
     } = await req.json();
-    const major = await prisma.major.create({
-      data: {
+
+    const major = await prisma.major.upsert({
+      where: { id },
+      update: {
         name,
-        category,
+        nameMn,
         description,
+        descriptionMn,
+        overview,
+        overviewMn,
+        salary,
+        salaryMn,
+        jobOpenings,
+        jobOpeningsMn,
+        icon,
+        demandLabel,
+        category,
+        suitableFor,
+        advantages,
+        challenges,
+        demandLevel,
+        futureScope,
+      },
+      create: {
+        id,
+        name,
+        nameMn,
+        description,
+        descriptionMn,
+        overview,
+        overviewMn,
+        salary,
+        salaryMn,
+        jobOpenings,
+        jobOpeningsMn,
+        icon,
+        demandLabel,
+        category,
         suitableFor,
         advantages,
         challenges,
@@ -34,10 +83,11 @@ export async function POST(req: Request) {
         futureScope,
       },
     });
-    return Response.json(major, { status: 201 });
+
+    return NextResponse.json(major);
   } catch (error) {
     console.error(error);
-    return Response.json({ error }, { status: 500 });
+    return NextResponse.json({ error }, { status: 500 });
   }
 }
 

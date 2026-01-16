@@ -3,7 +3,7 @@ import { HomepageFooter } from '@/components/homepage-footer';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
-import { getMajorById, majors } from '@/lib/majors-data';
+import { getMajorById, getAllMajors } from '@/lib/majors-data';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -17,8 +17,8 @@ import {
   Gamepad2,
   TrendingUp,
   Briefcase,
-  CheckCircle2,
   ArrowLeft,
+  CheckCircle2,
 } from 'lucide-react';
 
 const iconMap = {
@@ -32,14 +32,20 @@ const iconMap = {
   gamepad: Gamepad2,
 };
 
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const majors = await getAllMajors();
   return majors.map((major) => ({
     id: major.id,
   }));
 }
 
-export function generateMetadata({ params }: { params: { id: string } }) {
-  const major = getMajorById(params.id);
+export async function generateMetadata({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
+  const { id } = await params;
+  const major = await getMajorById(id);
 
   if (!major) {
     return {
@@ -48,17 +54,18 @@ export function generateMetadata({ params }: { params: { id: string } }) {
   }
 
   return {
-    title: `${major.title} | Mongodingo`,
+    title: `${major.name} | Mongodingo`,
     description: major.description,
   };
 }
 
-export default function MajorDetailPage({
+export default async function MajorDetailPage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const major = getMajorById(params.id);
+  const { id } = await params;
+  const major = await getMajorById(id);
 
   if (!major) {
     notFound();
@@ -67,11 +74,45 @@ export default function MajorDetailPage({
   const Icon = iconMap[major.icon as keyof typeof iconMap] || Code;
 
   const demandColor = {
-    'very-high': 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
-    high: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
-    medium: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+    VERY_HIGH: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+    HIGH: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+    MEDIUM: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
   };
+  const mockSkills = [
+    {
+      id: '1',
+      name: 'Програмчлалын хэл (Java, Python, C++)',
+      subtitle: 'Programming Languages (Java, Python, C++)',
+    },
+    {
+      id: '2',
+      name: 'Програм хангамжийн загвар',
+      subtitle: 'Software Design Patterns',
+    },
+    {
+      id: '3',
+      name: 'Тестлэх ба алдаа засах',
+      subtitle: 'Testing & Debugging',
+    },
+    {
+      id: '4',
+      name: 'Өгөгдлийн бүтэц ба алгоритм',
+      subtitle: 'Data Structures & Algorithms',
+    },
+    {
+      id: '5',
+      name: 'Хувилбарын хяналт (Git)',
+      subtitle: 'Version Control (Git)',
+    },
+    {
+      id: '6',
+      name: 'Системийн архитектур',
+      subtitle: 'System Architecture',
+    },
+  ];
 
+  const skillsToShow =
+    major.Skill && major.Skill.length > 0 ? major.Skill : mockSkills;
   return (
     <div className="min-h-screen">
       <HomepageHeader />
@@ -84,7 +125,6 @@ export default function MajorDetailPage({
               Буцах
             </Link>
           </Button>
-
           {/* Header Section */}
           <div className="mb-12">
             <div className="flex items-start gap-6 mb-6">
@@ -93,13 +133,13 @@ export default function MajorDetailPage({
               </div>
               <div className="flex-grow">
                 <div className="flex items-center gap-3 mb-2">
-                  <h1 className="text-4xl font-bold">{major.title}</h1>
-                  <Badge className={`${demandColor[major.demand]} border`}>
-                    {major.demandMn}
+                  <h1 className="text-4xl font-bold">{major.name}</h1>
+                  <Badge className={`${demandColor[major.demandLevel]} border`}>
+                    {major.demandLabel}
                   </Badge>
                 </div>
                 <p className="text-xl text-muted-foreground mb-4">
-                  {major.titleMn}
+                  {major.nameMn}
                 </p>
                 <p className="text-lg text-foreground/80 leading-relaxed">
                   {major.overviewMn}
@@ -107,7 +147,6 @@ export default function MajorDetailPage({
               </div>
             </div>
           </div>
-
           {/* Stats Section */}
           <div className="grid md:grid-cols-3 gap-6 mb-12">
             <Card className="p-6 backdrop-blur-sm bg-card/60 border-border/60">
@@ -145,61 +184,118 @@ export default function MajorDetailPage({
                   <div className="text-sm text-muted-foreground">
                     Эрэлт хэрэгцээ
                   </div>
-                  <div className="font-semibold">{major.demandMn}</div>
+                  <div className="font-semibold">{major.demandLabel}</div>
                 </div>
               </div>
             </Card>
-          </div>
-
-          {/* Skills Section */}
+          </div>{' '}
           <Card className="p-8 mb-12 backdrop-blur-sm bg-card/60 border-border/60">
             <h2 className="text-2xl font-bold mb-6">
               Эзэмших ёстой ур чадварууд
             </h2>
             <div className="grid md:grid-cols-2 gap-4">
-              {major.skillsMn.map((skill, index) => (
-                <div key={index} className="flex items-start gap-3">
+              {mockSkills.map((skill, index) => (
+                <div key={skill.id} className="flex items-start gap-3">
                   <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
                   <div>
-                    <div className="font-medium">{skill}</div>
+                    <div className="font-medium">{skill.name}</div>
                     <div className="text-sm text-muted-foreground">
-                      {major.skills[index]}
+                      {skill.subtitle}
                     </div>
                   </div>
                 </div>
               ))}
             </div>
           </Card>
+          {/* Details Section */}
+          <Card className="p-8 mb-12 backdrop-blur-sm bg-card/60 border-border/60">
+            <h2 className="text-2xl font-bold mb-6">Дэлгэрэнгүй мэдээлэл</h2>
+            <div className="space-y-4">
+              <div>
+                <h3 className="font-semibold mb-2">Ерөнхий төрөл:</h3>
+                <p className="text-muted-foreground">{major.category}</p>
+              </div>
 
-          {/* Skill Roadmap Preview */}
+              <div>
+                <h3 className="font-semibold mb-2">Хэнд тохиромжтой:</h3>
+                <p className="text-muted-foreground">{major.suitableFor}</p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Давуу талууд:</h3>
+                <p className="text-muted-foreground">{major.advantages}</p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Сорилтууд:</h3>
+                <p className="text-muted-foreground">{major.challenges}</p>
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-2">Ирээдүйн төлөв:</h3>
+                <p className="text-muted-foreground">{major.futureScope}</p>
+              </div>
+            </div>
+          </Card>
+          {/* SKILLS */}
           <Card className="p-8 mb-8 backdrop-blur-sm bg-gradient-to-br from-primary/5 to-secondary/5 border-border/60">
-            <h2 className="text-2xl font-bold mb-4">
-              Ур чадварын замын зураглал
-            </h2>
+            <h2 className="text-2xl font-bold mb-4">Шаардагдах ур чадварууд</h2>
             <p className="text-muted-foreground mb-6">
-              Алхам алхмаар суралцаж, бүх шаардлагатай ур чадваруудыг эзэмш
+              Энэ мэргэжилд шаардагдах гол ур чадварууд
+            </p>
+            <div className="space-y-4 mb-6">
+              {skillsToShow.map((skill, index) => (
+                <div key={skill.id} className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-sm font-bold text-primary-foreground">
+                    {index + 1}
+                  </div>
+                  <div className="grow h-2 rounded-full bg-primary/20">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+                      style={{ width: `${100 - index * 10}%` }}
+                    />
+                  </div>
+                  <div className="text-sm font-medium min-w-0 flex-1">
+                    {skill.name}
+                  </div>
+                  <Badge variant="secondary" className="text-xs">
+                    {skill.level}
+                  </Badge>
+                </div>
+              ))}
+            </div>
+          </Card>
+          {/* Skills Section */}
+          {/* {major.Skill && major.Skill.length > 0 && ( */}
+          {/* <Card className="p-8 mb-8 backdrop-blur-sm bg-gradient-to-br from-primary/5 to-secondary/5 border-border/60">
+            <h2 className="text-2xl font-bold mb-4">Шаардагдах ур чадварууд</h2>
+            <p className="text-muted-foreground mb-6">
+              Энэ мэргэжилд шаардагдах гол ур чадварууд
             </p>
 
             <div className="space-y-4 mb-6">
-              {['Beginner', 'Intermediate', 'Advanced', 'Expert'].map(
-                (level, index) => (
-                  <div key={index} className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-sm font-bold text-primary-foreground">
-                      {index + 1}
-                    </div>
-                    <div className="flex-grow h-2 rounded-full bg-primary/20">
-                      <div
-                        className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
-                        style={{ width: `${(4 - index) * 25}%` }}
-                      />
-                    </div>
-                    <div className="text-sm font-medium w-24">{level}</div>
+              {major.Skill.map((skill, index) => (
+                <div key={skill.id} className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary to-secondary flex items-center justify-center text-sm font-bold text-primary-foreground">
+                    {index + 1}
                   </div>
-                ),
-              )}
+                  <div className="grow h-2 rounded-full bg-primary/20">
+                    <div
+                      className="h-full rounded-full bg-gradient-to-r from-primary to-secondary"
+                      style={{ width: `${100 - index * 20}%` }}
+                    />
+                  </div>
+                  <div className="text-sm font-medium min-w-0 flex-1">
+                    {skill.name}
+                  </div>
+                  <Badge variant="secondary" className="text-xs">
+                    {skill.level}
+                  </Badge>
+                </div>
+              ))}
             </div>
-          </Card>
-
+          </Card> */}
+          {/* )} */}
           {/* CTA Section */}
           <div className="text-center">
             <Button
