@@ -1,8 +1,7 @@
 generator client {
   provider = "prisma-client-js"
-  url      = env("DATABASE_URL")
-  provider        = "prisma-client-js"
-  previewFeatures = ["driverAdapters"]
+  
+  
 }
 
 datasource db {
@@ -25,25 +24,23 @@ model SubModule {
 }
 
 model Document {
+  id          String @id @default(cuid())
   richText    String
+  image       String[]
   subModuleId String
   moduleId    String
   teacherId   String
-  id          String @id @default(cuid())
+  
 }
 
 model User {
-  id       String @id @default(cuid())
-  name     String
-  role     String
-  lessonId String
-  id       String  @id @default(cuid())
-  name     String
-  role     String
-  lessonId String?
-  password String
-  schoolId String?
-  number   Int?    @unique
+  id        String  @id @default(cuid())
+  name      String
+  role      String
+  lessonId  String?
+  password  String
+  schoolId  String?
+  number    Int    @unique
 }
 
 model Lesson {
