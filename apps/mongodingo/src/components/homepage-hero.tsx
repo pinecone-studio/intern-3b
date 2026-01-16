@@ -1,8 +1,8 @@
-"use client"
+'use client';
 
-import { Button } from "@/components/ui/button"
-import { motion } from "framer-motion"
-import Link from "next/link"
+import { Button } from '@/components/ui/button';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
 
 export function HomepageHero() {
   return (
@@ -17,7 +17,7 @@ export function HomepageHero() {
           transition={{
             duration: 8,
             repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
           className="absolute -top-1/2 -left-1/2 w-full h-full bg-gradient-to-br from-primary/30 via-secondary/20 to-transparent rounded-full blur-3xl"
         />
@@ -29,7 +29,7 @@ export function HomepageHero() {
           transition={{
             duration: 10,
             repeat: Number.POSITIVE_INFINITY,
-            ease: "easeInOut",
+            ease: 'easeInOut',
           }}
           className="absolute -bottom-1/2 -right-1/2 w-full h-full bg-gradient-to-tl from-secondary/30 via-primary/20 to-transparent rounded-full blur-3xl"
         />
@@ -47,12 +47,20 @@ export function HomepageHero() {
             <div className="relative w-24 h-24">
               <motion.div
                 animate={{ rotate: 360 }}
-                transition={{ duration: 20, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                transition={{
+                  duration: 20,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: 'linear',
+                }}
                 className="absolute inset-0 border-2 border-dashed border-primary/40 rounded-full"
               />
               <motion.div
                 animate={{ rotate: -360 }}
-                transition={{ duration: 15, repeat: Number.POSITIVE_INFINITY, ease: "linear" }}
+                transition={{
+                  duration: 15,
+                  repeat: Number.POSITIVE_INFINITY,
+                  ease: 'linear',
+                }}
                 className="absolute inset-2 border-2 border-dashed border-secondary/40 rounded-full"
               />
               <div className="absolute inset-0 flex items-center justify-center">
@@ -67,11 +75,11 @@ export function HomepageHero() {
             transition={{ delay: 0.2, duration: 0.8 }}
             className="text-5xl md:text-7xl font-bold mb-6 text-balance leading-tight"
           >
-            {"Understand Your Major. Build Your "}
+            {'Өөрийн мэргэжлээ ойлгож,  '}
             <span className="bg-gradient-to-r from-primary via-secondary to-primary bg-clip-text text-transparent">
-              {"Tech Career"}
+              {' технологийн карьераа'}
             </span>
-            {". One Day at a Time."}
+            {' өдөр бүр нэг алхмаар босго.'}
           </motion.h1>
 
           <motion.p
@@ -96,7 +104,12 @@ export function HomepageHero() {
             >
               <Link href="/learn">Үнэгүй эхлэх</Link>
             </Button>
-            <Button size="lg" variant="outline" className="text-lg h-12 px-8 border-2 bg-transparent" asChild>
+            <Button
+              size="lg"
+              variant="outline"
+              className="text-lg h-12 px-8 border-2 bg-transparent"
+              asChild
+            >
               <Link href="/majors">Мэргэжил судлах</Link>
             </Button>
           </motion.div>
@@ -115,10 +128,12 @@ export function HomepageHero() {
                 />
               ))}
             </div>
-            <span className="font-medium">{"5,000+ оюутан аль хэдийн эхэлсэн"}</span>
+            <span className="font-medium">
+              {'5,000+ оюутан аль хэдийн эхэлсэн'}
+            </span>
           </motion.div>
         </div>
       </div>
     </section>
-  )
+  );
 }

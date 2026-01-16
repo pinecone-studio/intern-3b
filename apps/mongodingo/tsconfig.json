@@ -3,7 +3,7 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     },
     "jsx": "preserve",
     "noEmit": true,
@@ -20,9 +20,6 @@
         "name": "next"
       }
     ],
-    "paths": {
-      "@/*": ["./src/*"]
-    },
     "types": ["jest", "node"],
     "outDir": "dist",
     "rootDir": "src",
@@ -33,8 +30,7 @@
     "src/**/*.tsx",
     "src/**/*.js",
     "src/**/*.jsx",
-    "../../apps/mongodingo/.next/types/**/*.ts",
-    "../../dist/apps/mongodingo/.next/types/**/*.ts",
+    ".next/types/**/*.ts",
     "next-env.d.ts"
   ],
   "exclude": [

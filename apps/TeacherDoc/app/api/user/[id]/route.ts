@@ -1,8 +1,6 @@
-import prismaClient from '@/lib/prismaClient';
 import { NextResponse } from 'next/server';
 import { Prisma } from '@prisma/client';
-
-const prisma = prismaClient;
+import { prisma } from '@/lib/prisma';
 
 // --- DELETE: Delete user by ID ---
 export async function DELETE(
