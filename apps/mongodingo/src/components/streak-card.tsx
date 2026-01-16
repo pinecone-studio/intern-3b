@@ -1,20 +1,20 @@
-"use client"
+'use client';
 
-import { Card } from "@/components/ui/card"
-import { motion } from "framer-motion"
-import { Flame, Calendar } from "lucide-react"
+import { Card } from '@/components/ui/card';
+import { motion } from 'framer-motion';
+import { Flame, Calendar } from 'lucide-react';
 
 const weekDays = [
-  { day: "Mon", completed: true },
-  { day: "Tue", completed: true },
-  { day: "Wed", completed: true },
-  { day: "Thu", completed: false },
-  { day: "Fri", completed: false },
-  { day: "Sat", completed: false },
-  { day: "Sun", completed: false },
-]
+  { day: 'Mon', completed: true },
+  { day: 'Tue', completed: true },
+  { day: 'Wed', completed: true },
+  { day: 'Thu', completed: false },
+  { day: 'Fri', completed: false },
+  { day: 'Sat', completed: false },
+  { day: 'Sun', completed: false },
+];
 
-export function StreakCard() {
+export function StreakCard({ user }: { user: any }) {
   return (
     <Card className="p-6 bg-gradient-to-br from-orange-500/10 via-card to-card border-orange-500/20">
       <div className="flex items-center gap-3 mb-6">
@@ -54,10 +54,14 @@ export function StreakCard() {
             >
               <div
                 className={`w-full aspect-square rounded-lg flex items-center justify-center mb-1 ${
-                  item.completed ? "bg-orange-500/20 border-2 border-orange-500" : "bg-muted/30 border-2 border-border"
+                  item.completed
+                    ? 'bg-orange-500/20 border-2 border-orange-500'
+                    : 'bg-muted/30 border-2 border-border'
                 }`}
               >
-                {item.completed && <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />}
+                {item.completed && (
+                  <Flame className="w-4 h-4 text-orange-500 fill-orange-500" />
+                )}
               </div>
               <div className="text-xs text-muted-foreground">{item.day}</div>
             </motion.div>
@@ -65,5 +69,5 @@ export function StreakCard() {
         </div>
       </div>
     </Card>
-  )
+  );
 }

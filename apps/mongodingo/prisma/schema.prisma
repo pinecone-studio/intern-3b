@@ -41,15 +41,31 @@ model LessonHistory {
 }
 
 model Major {
-  id                String              @id
-  name              String
-  category          String              @default("Tech")
-  description       String
-  suitableFor       String
-  advantages        String
-  challenges        String
-  demandLevel       DemandLevel
-  futureScope       FutureScope
+  id            String  @id
+  name          String
+  nameMn        String?
+  description   String
+  descriptionMn String
+
+  overview   String
+  overviewMn String
+
+  salary        String
+  salaryMn      String
+  jobOpenings   String
+  jobOpeningsMn String
+
+  icon        String
+  demandLabel String // "very-high", "high", "medium"
+
+  category    String @default("Tech")
+  suitableFor String
+  advantages  String
+  challenges  String
+
+  demandLevel DemandLevel
+  futureScope FutureScope
+
   CareerOpportunity CareerOpportunity[]
   Skill             Skill[]
   StudyPath         StudyPath[]

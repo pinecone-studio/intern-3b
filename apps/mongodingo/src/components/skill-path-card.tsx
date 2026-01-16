@@ -20,7 +20,7 @@ const skillPath: SkillNode[] = [
   { id: "5", title: "State Management", status: "locked", progress: 0 },
 ]
 
-export function SkillPathCard() {
+export function SkillPathCard({ user }: { user: any }) {
   return (
     <Card className="p-6 bg-card border-border">
       <h2 className="text-2xl font-bold mb-6">Ур чадварын зам</h2>

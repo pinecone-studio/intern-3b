@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
 
 export const GET = async (req: Request) => {
   try {
@@ -11,24 +12,26 @@ export const GET = async (req: Request) => {
   }
 };
 
-export const POST = async (req: Request) => {
+export async function POST(req: Request) {
   try {
-    const { title, content, xp, skillId } = await req.json();
+    const { id, title, content, xp, skillId } = await req.json();
+
     const lesson = await prisma.lesson.create({
       data: {
+        id,
         title,
         content,
         xp,
         skillId,
       },
     });
-    return Response.json({ lesson }, { status: 200 });
+
+    return NextResponse.json(lesson);
   } catch (error) {
     console.error(error);
-    return Response.json({ error: 'failed to post lesson' }, { status: 500 });
+    return NextResponse.json({ error }, { status: 500 });
   }
-};
-
+}
 export const DELETE = async (req: Request) => {
   try {
     const { id } = await req.json();

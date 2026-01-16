@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
 
 export async function GET() {
   try {
@@ -17,34 +18,23 @@ export async function GET() {
 
 export async function POST(req: Request) {
   try {
-    const body = await req.json();
-    const title = body?.title;
-    const duration = body?.duration;
-    const requirements = body?.requirements;
-    const majorId = body?.majorId;
-
-    if (
-      ![title, location, duration, requirements, majorId].every(
-        (v) => typeof v === 'string' && v.length > 0,
-      )
-    ) {
-      return Response.json(
-        {
-          error:
-            'title, location, duration, requirements, majorId are required!',
-        },
-        { status: 400 },
-      );
-    }
+    const { id, title, location, duration, requirements, majorId } =
+      await req.json();
 
     const created = await prisma.studyPath.create({
-      data: { title, location, duration, requirements, majorId },
+      data: {
+        id,
+        title,
+        location,
+        duration,
+        requirements,
+        majorId,
+      },
     });
-    return Response.json(created, { status: 201 });
-  } catch {
-    return Response.json(
-      { error: 'Failed to create study path' },
-      { status: 500 },
-    );
+
+    return NextResponse.json(created);
+  } catch (error) {
+    console.error(error);
+    return NextResponse.json({ error }, { status: 500 });
   }
 }

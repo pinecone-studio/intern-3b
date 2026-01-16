@@ -1,37 +1,43 @@
-"use client"
+'use client';
 
-import { Card } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { motion } from "framer-motion"
-import Link from "next/link"
-import { Code, Globe, Smartphone, BarChart3, Brain, Shield, Cloud, Gamepad2, TrendingUp, Briefcase } from "lucide-react"
-import { Major } from "@/lib/majors-data"
+import { Card } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { motion } from 'framer-motion';
+import Link from 'next/link';
+import {
+  Code,
+  Globe,
+  Smartphone,
+  BarChart3,
+  Brain,
+  Shield,
+  Cloud,
+  Gamepad2,
+  TrendingUp,
+  Briefcase,
+} from 'lucide-react';
+import { MajorCardProps } from '@/lib/types';
 
 const iconMap = {
   code: Code,
   globe: Globe,
   smartphone: Smartphone,
-  "bar-chart": BarChart3,
+  'bar-chart': BarChart3,
   brain: Brain,
   shield: Shield,
   cloud: Cloud,
   gamepad: Gamepad2,
-}
-
-interface MajorCardProps {
-  major: Major
-  index: number
-}
+};
 
 export function MajorCard({ major, index }: MajorCardProps) {
-  const Icon = iconMap[major.icon as keyof typeof iconMap] || Code
+  const Icon = iconMap[major.icon as keyof typeof iconMap] || Code;
 
   const demandColor = {
-    "very-high": "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
-    high: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-    medium: "bg-amber-500/10 text-amber-600 border-amber-500/20",
-  }
+    VERY_HIGH: 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20',
+    HIGH: 'bg-blue-500/10 text-blue-600 border-blue-500/20',
+    MEDIUM: 'bg-amber-500/10 text-amber-600 border-amber-500/20',
+  };
 
   return (
     <motion.div
@@ -45,12 +51,16 @@ export function MajorCard({ major, index }: MajorCardProps) {
           <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-primary to-secondary flex items-center justify-center">
             <Icon className="w-7 h-7 text-primary-foreground" />
           </div>
-          <Badge className={`${demandColor[major.demand]} border`}>{major.demandMn}</Badge>
+          <Badge className={`${demandColor[major.demandLevel]} border`}>
+            {major.demandLabel}
+          </Badge>
         </div>
 
-        <h3 className="text-xl font-bold mb-2">{major.title}</h3>
-        <p className="text-sm text-muted-foreground mb-4">{major.titleMn}</p>
-        <p className="text-sm text-foreground/80 mb-4 leading-relaxed flex-grow">{major.descriptionMn}</p>
+        <h3 className="text-xl font-bold mb-2">{major.name}</h3>
+        <p className="text-sm text-muted-foreground mb-2">{major.nameMn}</p>
+        <p className="text-sm text-foreground/80 mb-4 leading-relaxed flex-grow">
+          {major.descriptionMn}
+        </p>
 
         <div className="space-y-2 mb-4">
           <div className="flex items-center gap-2 text-sm">
@@ -68,5 +78,5 @@ export function MajorCard({ major, index }: MajorCardProps) {
         </Button>
       </Card>
     </motion.div>
-  )
+  );
 }

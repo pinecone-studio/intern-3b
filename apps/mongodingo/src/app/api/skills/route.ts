@@ -1,4 +1,5 @@
 import { prisma } from '@/lib/prisma';
+import { NextResponse } from 'next/server';
 
 export async function GET(req: Request) {
   try {
@@ -12,17 +13,23 @@ export async function GET(req: Request) {
 
 export async function POST(req: Request) {
   try {
-    const { name, level, majorId } = await req.json();
+    const { id, name, level, majorId } = await req.json();
+
     const skill = await prisma.skill.create({
-      data: { name, level, majorId },
+      data: {
+        id,
+        name,
+        level,
+        majorId,
+      },
     });
-    return Response.json({ skill }, { status: 200 });
+
+    return NextResponse.json(skill);
   } catch (error) {
     console.error(error);
-    return Response.json({ error: 'failed to create skill' }, { status: 500 });
+    return NextResponse.json({ error }, { status: 500 });
   }
 }
-
 export async function DELETE(req: Request) {
   const { id } = await req.json();
   try {
