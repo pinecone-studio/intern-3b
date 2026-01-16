@@ -4,7 +4,6 @@
     "slug": "unitok-mobile",
     "scheme": "unitok-mobile",
 
-
     "icon": "./assets/images/icon.png",
 
     "android": {
@@ -15,7 +14,8 @@
     },
 
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "bundler": "metro"
     },
 
     "plugins": [
