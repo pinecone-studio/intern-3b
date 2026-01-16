@@ -1,8 +1,6 @@
-import prismaClient from '@/lib/prismaClient';
 import { NextResponse } from 'next/server';
-import { Prisma } from '@prisma/client'; 
-
-const prisma = prismaClient;
+import { Prisma } from '@prisma/client';
+import { prisma } from '@/lib/prisma';
 
 export async function GET() {
   try {
@@ -55,7 +53,6 @@ export async function POST(request: Request) {
     );
   } catch (error: unknown) {
     console.error('User Create Error:', error);
-
 
     if (error instanceof Prisma.PrismaClientKnownRequestError) {
       if (error.code === 'P2002') {
