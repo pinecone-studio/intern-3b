@@ -83,31 +83,37 @@ export default async function MajorDetailPage({
       id: '1',
       name: 'Програмчлалын хэл (Java, Python, C++)',
       subtitle: 'Programming Languages (Java, Python, C++)',
+      level: 'Beginner',
     },
     {
       id: '2',
       name: 'Програм хангамжийн загвар',
       subtitle: 'Software Design Patterns',
+      level: 'Intermediate',
     },
     {
       id: '3',
       name: 'Тестлэх ба алдаа засах',
       subtitle: 'Testing & Debugging',
+      level: 'Intermediate',
     },
     {
       id: '4',
       name: 'Өгөгдлийн бүтэц ба алгоритм',
       subtitle: 'Data Structures & Algorithms',
+      level: 'Advanced',
     },
     {
       id: '5',
       name: 'Хувилбарын хяналт (Git)',
       subtitle: 'Version Control (Git)',
+      level: 'Beginner',
     },
     {
       id: '6',
       name: 'Системийн архитектур',
       subtitle: 'System Architecture',
+      level: 'Advanced',
     },
   ];
 

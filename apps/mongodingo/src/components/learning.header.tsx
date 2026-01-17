@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { Heart, Flame, Gem, Zap, Crown, User } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export function LearningHeader({ user }: { user: any }) {
+export function LearningHeader() {
   return (
     <motion.header
       initial={{ y: -20, opacity: 0 }}

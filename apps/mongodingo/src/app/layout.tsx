@@ -2,10 +2,11 @@ import type React from 'react';
 import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
+import { UserProvider } from '@/lib/user-store';
 import './global.css';
 
-const geist = Geist({ subsets: ['latin'] });
-const geistMono = Geist_Mono({ subsets: ['latin'] });
+const _geist = Geist({ subsets: ['latin'] });
+const _geistMono = Geist_Mono({ subsets: ['latin'] });
 
 export const metadata: Metadata = {
   title: 'Mongodingo - Learn Tech Careers | Технологийн карьер сур',
@@ -38,8 +39,8 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${geist.className} antialiased`}>
-        {children}
+      <body className={`font-sans antialiased`}>
+        <UserProvider>{children}</UserProvider>
         <Analytics />
       </body>
     </html>

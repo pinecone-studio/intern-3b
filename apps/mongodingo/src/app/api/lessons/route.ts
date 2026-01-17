@@ -14,15 +14,16 @@ export const GET = async (req: Request) => {
 
 export async function POST(req: Request) {
   try {
-    const { id, title, content, xp, skillId } = await req.json();
+    const { title, content, xp, skillId } = await req.json();
 
     const lesson = await prisma.lesson.create({
       data: {
-        id,
         title,
         content,
         xp,
-        skillId,
+        Skill: {
+          connect: { id: skillId },
+        },
       },
     });
 
