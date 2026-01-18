@@ -3,7 +3,7 @@
   "compilerOptions": {
     "outDir": "dist",
     "types": ["node"],
-    "rootDir": "src",
+    // "rootDir": "src",
     "jsx": "react-jsx",
     "noUnusedLocals": false,
     "tsBuildInfoFile": "dist/tsconfig.app.tsbuildinfo"
@@ -30,6 +30,8 @@
     "eslint.config.mjs"
   ],
   "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
     "**/*.ts",
     "**/*.tsx",
     "**/*.js",

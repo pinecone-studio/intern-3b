@@ -28,6 +28,8 @@
     "pages/**/*",
     "lib/**/*",
     "**/*.tsx",
+    "**/*.ts",
+    "generated/prisma/**/*",
     "app/**/*.ts",
     "app/**/*.tsx",
     "app/**/*.js",
