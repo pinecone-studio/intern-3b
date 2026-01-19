@@ -1,5 +1,6 @@
 import { ThemeProvider } from '@/lib/contexts/ThemeProvider';
 import './global.css';
+import { ClerkProvider } from '@clerk/nextjs';
 
 import { Inter } from 'next/font/google';
 
@@ -33,12 +34,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body
-        className={`${inter.className} antialiased bg-background text-foreground`}
-      >
-        <ThemeProvider>{children}</ThemeProvider>
-      </body>
-    </html>
+    <ClerkProvider
+      publishableKey={
+        process.env.pk_test_YW1hemVkLWJpc29uLTMxLmNsZXJrLmFjY291bnRzLmRldiQ
+      }
+    >
+      <html lang="en" suppressHydrationWarning>
+        <body
+          className={`${inter.className} antialiased bg-background text-foreground`}
+        >
+          <ThemeProvider>{children}</ThemeProvider>
+        </body>
+      </html>
+    </ClerkProvider>
   );
 }
