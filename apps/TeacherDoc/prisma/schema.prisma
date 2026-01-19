@@ -12,12 +12,14 @@ model Module {
   semesterId String
   lessonId   String
   gradeId    String
+  subModules  SubModule[]
 }
 
 model SubModule {
   id       String @id @default(cuid())
   name     String
   moduleId String
+  module   Module @relation(fields: [moduleId], references: [id], onDelete: Cascade)
 }
 
 model Document {
