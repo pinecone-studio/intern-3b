@@ -1,18 +1,19 @@
 generator client {
   provider = "prisma-client-js"
-  output = "../generated/prisma"
+  output   = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
+
 model Module {
-  id         String @id @default(cuid())
+  id         String      @id @default(cuid())
   name       String
   semesterId String
   lessonId   String
   gradeId    String
-  subModules  SubModule[]
+  subModules SubModule[]
 }
 
 model SubModule {
@@ -23,23 +24,23 @@ model SubModule {
 }
 
 model Document {
-  id          String @id @default(cuid())
+  id          String   @id @default(cuid())
   richText    String
   image       String[]
   subModuleId String
   moduleId    String
   teacherId   String
-  
+  title       String
 }
 
 model User {
-  id        String  @id @default(cuid())
-  name      String
-  role      String
-  lessonId  String?
-  password  String
-  schoolId  String?
-  number    Int    @unique
+  id       String  @id @default(cuid())
+  name     String
+  role     String
+  lessonId String?
+  password String
+  schoolId String?
+  number   Int     @unique
 }
 
 model Lesson {

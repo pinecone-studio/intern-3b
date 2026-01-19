@@ -1,15 +1,26 @@
 import { prisma } from '@/lib/prisma';
 import { NextResponse } from 'next/server';
-import { Prisma } from '@prisma/client';
 
 export async function PATCH(
   request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = await params;
-    const body = await request.json();
-    const { name } = body;
+    const { id } = params;
+    const { name } = await request.json();
+
+    if (!name) {
+      return NextResponse.json(
+        { error: 'Lesson name is required' },
+        { status: 400 },
+      );
+    }
+
+    // 404 шалгалт
+    const exists = await prisma.lesson.findUnique({ where: { id } });
+    if (!exists) {
+      return NextResponse.json({ error: 'Lesson not found' }, { status: 404 });
+    }
 
     const updatedLesson = await prisma.lesson.update({
       where: { id },
@@ -30,11 +41,17 @@ export async function PATCH(
 }
 
 export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
+  _request: Request,
+  { params }: { params: { id: string } },
 ) {
   try {
-    const { id } = await params;
+    const { id } = params;
+
+    // 404 шалгалт
+    const exists = await prisma.lesson.findUnique({ where: { id } });
+    if (!exists) {
+      return NextResponse.json({ error: 'Lesson not found' }, { status: 404 });
+    }
 
     const deletedLesson = await prisma.lesson.delete({
       where: { id },
@@ -46,16 +63,6 @@ export async function DELETE(
     );
   } catch (error) {
     console.error('Delete Lesson Error:', error);
-
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2025') {
-        return NextResponse.json(
-          { error: 'Lesson not found' },
-          { status: 404 },
-        );
-      }
-    }
-
     return NextResponse.json(
       { error: 'Failed to delete lesson' },
       { status: 500 },
