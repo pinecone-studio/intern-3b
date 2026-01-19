@@ -4414,7 +4414,7 @@
     tslib "^2.3.0"
     webpack "^5.101.3"
 
-"@nx/next@22.3.3":
+"@nx/next@^22.3.3":
   version "22.3.3"
   resolved "https://registry.yarnpkg.com/@nx/next/-/next-22.3.3.tgz#e3a26a48f98bb2999296ae8fe13b3740e51a4c4f"
   integrity sha512-RxAjNeIXLM0Tfl0MsvRzlMKIpVgSB4gHCjxmCcJARrmObzmM7crnkDHToY6gPhIsQlmhlAqm8qQhIwyZxrAqUA==

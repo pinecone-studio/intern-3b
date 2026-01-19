@@ -18,6 +18,7 @@ model CareerOpportunity {
 
   @@index([majorId])
 }
+
 model Lesson {
   id            String          @id @default(uuid())
   title         String
@@ -26,9 +27,8 @@ model Lesson {
   skillId       String
   Skill         Skill           @relation(fields: [skillId], references: [id])
   LessonHistory LessonHistory[]
+   questions     Question[]
 }
-
-
 
 model LessonHistory {
   id        String   @id
@@ -86,6 +86,8 @@ model Skill {
   Lesson   Lesson[]
   Progress Progress[]
   Major    Major      @relation(fields: [majorId], references: [id])
+
+  @@index([majorId])
 }
 
 model StudyPath {
@@ -111,6 +113,28 @@ model User {
   LessonHistory LessonHistory[]
   Progress      Progress[]
   Major         Major?          @relation(fields: [majorId], references: [id])
+}
+
+model Question {
+  id        String   @id @default(uuid())
+  lessonId  String
+  question  String
+  questionMn String?
+  code      String?
+
+  Lesson    Lesson  @relation(fields: [lessonId], references: [id])
+  answers   Answer[]
+}
+
+
+model Answer {
+  id         String   @id @default(uuid())
+  questionId String
+  text       String
+  textMn     String?
+  isCorrect  Boolean
+
+  Question   Question @relation(fields: [questionId], references: [id])
 }
 
 enum DemandLevel {
