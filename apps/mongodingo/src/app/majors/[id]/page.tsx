@@ -309,7 +309,7 @@ export default async function MajorDetailPage({
               className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg h-12 px-8"
               asChild
             >
-              <Link href="/learn">Энэ замаар эхлэх</Link>
+              <Link href={`/learn/${major.id}`}>Энэ замаар эхлэх</Link>
             </Button>
           </div>
         </div>
