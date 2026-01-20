@@ -59,7 +59,7 @@ export default function HomePage() {
             >
               <Ticket className="h-4 w-4 text-foreground" />
               <span className="text-sm font-semibold text-foreground">
-                {currentTickets}
+                {currentTickets}           
               </span>
             </Button>
             <ThemeToggleButton />
