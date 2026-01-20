@@ -94,5 +94,8 @@
   "workspaces": [
     "apps/*",
     "libs/*"
-  ]
+  ],
+  "resolutions": {
+    "react-native-safe-area-context": "5.6.2"
+  }
 }
