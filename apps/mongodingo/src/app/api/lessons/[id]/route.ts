@@ -5,8 +5,7 @@ export async function GET(
   _req: Request,
   context: { params: Promise<{ id: string }> },
 ) {
-  const { id } = await context.params; // ✅ REQUIRED IN NEXT 16
-
+  const { id } = await context.params;
   if (!id) {
     return NextResponse.json({ error: 'Lesson id missing' }, { status: 400 });
   }

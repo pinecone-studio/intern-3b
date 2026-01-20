@@ -139,10 +139,10 @@ export function CourseLessonTree({
                   <h3
                     className={`font-bold ${isLocked ? 'text-muted-foreground' : isCurrent ? 'text-primary' : 'text-foreground'}`}
                   >
-                    {lesson.titleMn}
+                    {lesson.title}
                   </h3>
                   <p className="text-sm text-muted-foreground mt-1">
-                    {lesson.descriptionMn}
+                    {course.title}
                   </p>
                   {!isLocked && (
                     <div className="mt-2 text-xs font-semibold text-primary">
