@@ -3,7 +3,8 @@
 import { Star } from 'lucide-react';
 
 import { Course, Review } from '@/lib/types';
-import { HomeReviewItem } from './HomeReviewItem';
+import { HomeReviewItem } from '@/components/HomeReviewItem';
+
 
 interface HomeFeedProps {
   reviews: Review[];
