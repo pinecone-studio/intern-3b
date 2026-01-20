@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-
 import { useUser } from '@/lib/user-store';
 import { LessonView } from '@/components/lesson-view';
 import { LessonComplete } from '@/components/lesson-complete';
@@ -17,7 +16,6 @@ type View = 'major' | 'course' | 'lesson' | 'completion';
 
 export default function LearnClient({ majorId }: { majorId: string }) {
   const { completedLessons, completeLesson, updateStreak } = useUser();
-
   const [major, setMajor] = useState<any | null>(null);
   const [activeLesson, setActiveLesson] = useState<any | null>(null);
   const [currentView, setCurrentView] = useState<View>('major');
@@ -25,7 +23,6 @@ export default function LearnClient({ majorId }: { majorId: string }) {
   const [activeLessonId, setActiveLessonId] = useState<string | null>(null);
   const [lastXpEarned, setLastXpEarned] = useState(0);
 
-  // ✅ fetch MAJOR by slug
   useEffect(() => {
     fetch(`/api/learn/${majorId}`)
       .then(async (res) => {
@@ -44,15 +41,22 @@ export default function LearnClient({ majorId }: { majorId: string }) {
     updateStreak();
   }, [updateStreak]);
 
-  // ✅ fetch lesson when entering lesson view
   useEffect(() => {
-    if (currentView === 'lesson' && activeLessonId) {
-      fetch(`/api/lessons/${activeLessonId}`)
-        .then((res) => res.json())
-        .then((lesson) => {
+    if (currentView !== 'lesson' || !activeLessonId) return;
+
+    let cancelled = false;
+
+    fetch(`/api/lessons/${activeLessonId}`)
+      .then((res) => res.json())
+      .then((lesson) => {
+        if (!cancelled) {
           setActiveLesson(mapLessonToQuiz(lesson));
-        });
-    }
+        }
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, [currentView, activeLessonId]);
 
   if (!major) {
@@ -62,11 +66,10 @@ export default function LearnClient({ majorId }: { majorId: string }) {
       </div>
     );
   }
-  // 🔒 NORMALIZE COURSES ONCE (THIS IS THE SOURCE OF TRUTH)
+
   const courses = (major.Skill ?? [])
-    .filter((skill: any) => Array.isArray(skill.Lesson))
     .map(mapCourseFromDb)
-    .filter((course: any) => course && course.lessons.length > 0);
+    .filter((course: any) => course?.lessons?.length > 0);
 
   const currentCourse = courses.find(
     (course: any) => course.id === selectedCourseId,
@@ -82,8 +85,6 @@ export default function LearnClient({ majorId }: { majorId: string }) {
     });
 
     return inProgress || courses[0];
-
-    return mapCourseFromDb(inProgress || major.Skill[0]);
   };
 
   const featuredCourse = getFeaturedCourse();
@@ -108,10 +109,54 @@ export default function LearnClient({ majorId }: { majorId: string }) {
 
     return (completed / course.lessons.length) * 100;
   };
+  const getNextPlayableLesson = (course: any) => {
+    return course.lessons.find(
+      (lesson: any) => !completedLessons.includes(lesson.id),
+    );
+  };
+
+  const nextLesson = featuredCourse
+    ? getNextPlayableLesson(featuredCourse)
+    : null;
+
+  const showNextLessonCard = !!nextLesson && !!nextLesson.title;
+  console.log(
+    'sdadasdadsa',
+    major.Skill[0].Lesson.map((l: any) => ({
+      title: l.title,
+      questions: l._count.questions,
+    })),
+  );
+
+  console.log(
+    'dsadsadsa',
+    major.Skill[0].Lesson.map((l: any) => ({
+      title: l.title,
+      q: l._count.questions,
+    })),
+  );
+
+  console.log('LESSONS FULL', featuredCourse?.lessons);
+
+  console.log('NEXT LESSON OBJECT:', nextLesson);
+  console.log(
+    'LESSONS',
+    featuredCourse?.lessons.map((l: any) => ({
+      id: l.id,
+      title: l.title,
+      q: l.questionCount,
+    })),
+  );
 
   const handleFeaturedCourseClick = () => {
+    if (!nextLesson) {
+      alert('Энэ сургалтанд асуулттай хичээл алга байна');
+      return;
+    }
+
     setSelectedCourseId(featuredCourse.id);
-    setCurrentView('course');
+    setActiveLessonId(nextLesson.id);
+    setCurrentView('lesson');
   };
 
   const handleCourseClick = (courseId: string) => {
@@ -120,6 +165,13 @@ export default function LearnClient({ majorId }: { majorId: string }) {
   };
 
   const handleLessonClick = (lessonId: string) => {
+    const lesson = currentCourse?.lessons.find((l: any) => l.id === lessonId);
+
+    if (!lesson || lesson.questionCount === 0) {
+      alert('Энэ хичээлд асуулт хараахан алга байна');
+      return;
+    }
+
     setActiveLessonId(lessonId);
     setCurrentView('lesson');
   };
@@ -143,6 +195,7 @@ export default function LearnClient({ majorId }: { majorId: string }) {
   };
 
   const handleExitLesson = () => {
+    setActiveLesson(null);
     setActiveLessonId(null);
     setCurrentView('course');
   };
@@ -213,11 +266,21 @@ export default function LearnClient({ majorId }: { majorId: string }) {
           transition={{ delay: 0.1 }}
           className="mb-12"
         >
-          {featuredCourse && (
+          {featuredCourse && showNextLessonCard && nextLesson ? (
             <FeaturedCourseCard
               course={featuredCourse}
+              lesson={nextLesson}
               onClick={handleFeaturedCourseClick}
             />
+          ) : (
+            <div className="rounded-2xl border bg-muted/40 p-8 text-center">
+              <div className="text-lg font-semibold">
+                Дараагийн хичээл алга байна
+              </div>
+              <div className="text-sm text-muted-foreground mt-1">
+                Энэ сургалтанд асуулттай хичээл удахгүй нэмэгдэнэ.
+              </div>
+            </div>
           )}
         </motion.div>
 
@@ -230,44 +293,26 @@ export default function LearnClient({ majorId }: { majorId: string }) {
           <h2 className="text-2xl font-bold mb-6">Таны мэргэжлийн зам</h2>
 
           <div className="space-y-4">
-            {courses.map((course: any, index: number) => {
-              const status = getCourseStatus(course);
-              const progress = getCourseProgress(course);
-              const lessonsCompleted = course.lessons.filter((lesson: any) =>
-                completedLessons.includes(lesson.id),
-              ).length;
-
-              return (
-                <motion.div
+            {courses.length === 0 ? (
+              <div className="text-center py-16 text-muted-foreground">
+                Контент бэлдэгдэж байна 🚧
+              </div>
+            ) : (
+              courses.map((course: any) => (
+                <CourseListCard
                   key={course.id}
-                  initial={{ x: -20, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  transition={{ delay: 0.3 + index * 0.1 }}
-                >
-                  {courses.length === 0 ? (
-                    <div className="text-center py-16 text-muted-foreground">
-                      <p className="text-lg font-medium">
-                        Контент бэлдэгдэж байна 🚧
-                      </p>
-                      <p className="mt-2 text-sm">
-                        Энэ мэргэжлийн сургалтын хичээлүүд удахгүй нэмэгдэнэ.
-                      </p>
-                    </div>
-                  ) : (
-                    courses.map((course: any, index: any) => (
-                      <CourseListCard
-                        key={index}
-                        course={course}
-                        status={status}
-                        progress={progress}
-                        lessonsCompleted={lessonsCompleted}
-                        onClick={() => handleCourseClick(course.id)}
-                      />
-                    ))
-                  )}
-                </motion.div>
-              );
-            })}
+                  course={course}
+                  status={getCourseStatus(course)}
+                  progress={getCourseProgress(course)}
+                  lessonsCompleted={
+                    course.lessons.filter((l: any) =>
+                      completedLessons.includes(l.id),
+                    ).length
+                  }
+                  onClick={() => handleCourseClick(course.id)}
+                />
+              ))
+            )}
           </div>
         </motion.div>
       </main>

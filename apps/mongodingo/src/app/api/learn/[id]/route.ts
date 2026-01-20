@@ -9,11 +9,17 @@ export async function GET(
 
   try {
     const major = await prisma.major.findUnique({
-      where: { id },
+      where: { id: id },
       include: {
         Skill: {
           include: {
-            Lesson: true,
+            Lesson: {
+              include: {
+                _count: {
+                  select: { questions: true },
+                },
+              },
+            },
           },
         },
       },
