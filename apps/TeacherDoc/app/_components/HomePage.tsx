@@ -76,14 +76,14 @@ export default function HomePage() {
 
       <main className="max-w-[1504px] mx-auto px-6 py-10 relative z-10">
         <Navbar
-          onAddModule={(newModule) => setModules((prev) => [...prev, newModule])}
-          onAddSubModule={(moduleId, newSub) => {
-            setModules((prev) =>
-              prev.map((m) =>
-                m.id === moduleId ? { ...m, subModules: [...m.subModules, newSub] } : m
-              )
-            );
-          }}
+          // onAddModule={(newModule) => setModules((prev) => [...prev, newModule])}
+          // onAddSubModule={(moduleId, newSub) => {
+          //   setModules((prev) =>
+          //     prev.map((m) =>
+          //       m.id === moduleId ? { ...m, subModules: [...m.subModules, newSub] } : m
+          //     )
+          //   );
+          // }}
         />
        
         <div className="mb-16 mt-10 text-center animate-in fade-in slide-in-from-bottom-4 duration-700">

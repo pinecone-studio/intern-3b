@@ -1,32 +1,14 @@
 'use client';
-import { useState, useEffect } from 'react';
+
 import { Button } from '@intern-3b/shadcn';
-import AddModuleForm from './AddModule';
-import AddSubModuleForm from './AddSubModule';
-import { BookOpen, Sparkles, School, Plus, Crown, X } from 'lucide-react';
 
-interface Module {
-  id: string;
-  name: string;
-}
+import { BookOpen, Sparkles, School, Crown,  } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
-interface NavbarProps {
-  onAddModule: (newModule: any) => void;
-  onAddSubModule: (moduleId: string, newSub: any) => void;
-}
+export default function Navbar() {
+const router=useRouter()
 
-export default function Navbar({ onAddModule, onAddSubModule }: NavbarProps) {
-  const [isModuleModalOpen, setIsModuleModalOpen] = useState(false);
-  const [isSubModalOpen, setIsSubModalOpen] = useState(false);
-  const [modules, setModules] = useState<Module[]>([]);
-  const [selectedModuleId, setSelectedModuleId] = useState<string>('');
 
-  useEffect(() => {
-    fetch('/api/module')
-      .then((res) => res.json())
-      .then((data) => setModules(data))
-      .catch(console.error);
-  }, []);
 
   return (
     <nav className="relative w-full border-b border-gray-100 bg-white/80 backdrop-blur-md z-40">
@@ -52,22 +34,20 @@ export default function Navbar({ onAddModule, onAddSubModule }: NavbarProps) {
     
         <div className="flex items-center gap-3">
        
-          <button 
-            onClick={() => setIsSubModalOpen(true)}
+          <Button 
+            onClick={()=>router.push('/manager')}
             className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
           >
             <School className="w-5 h-5 text-slate-700" />
-            <span className="font-bold text-slate-700 text-[15px]">Дэд сэдэв</span>
-          </button>
-
-
-          <button 
-            onClick={() => setIsModuleModalOpen(true)}
-            className="flex items-center gap-2 px-5 py-2.5 bg-[#059669] text-white rounded-xl hover:bg-[#047857] transition-all shadow-md shadow-emerald-100"
+            <span className="font-bold text-slate-700 text-[15px]">manager</span>
+          </Button>
+   <Button 
+            onClick={()=>router.push('/')}
+            className="flex items-center gap-2 px-4 py-2.5 bg-white border border-gray-200 rounded-xl hover:bg-gray-50 transition-all shadow-sm"
           >
-            <Plus className="w-5 h-5" />
-            <span className="font-bold text-[15px]">Хичээл нэмэх</span>
-          </button>
+            <School className="w-5 h-5 text-slate-700" />
+            <span className="font-bold text-slate-700 text-[15px]">home</span>
+          </Button>
 
   
           <div className="ml-2 relative">
@@ -80,65 +60,6 @@ export default function Navbar({ onAddModule, onAddSubModule }: NavbarProps) {
           </div>
         </div>
       </div>
-
-     
-      {isModuleModalOpen && (
-        <div className="fixed inset-0 mt-60 flex items-center justify-center bg-slate-900/40 backdrop-blur-[2px] z-[100] animate-in fade-in duration-200">
-          <div className="bg-white p-8 rounded-[32px] shadow-2xl w-full max-w-md border border-gray-100 relative">
-            <button 
-              onClick={() => setIsModuleModalOpen(false)}
-              className="absolute right-6 top-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-400" />
-            </button>
-            <h2 className="text-2xl font-black text-slate-900 mb-6">Шинэ хичээл нэмэх</h2>
-            <AddModuleForm
-              onAdd={(newModule) => {
-                onAddModule(newModule);
-                setModules((prev) => [...prev, newModule]);
-                setIsModuleModalOpen(false);
-              }}
-            />
-          </div>
-        </div>
-      )}
-
-      {isSubModalOpen && (
-        <div className="fixed inset-0 flex items-center justify-center bg-slate-900/40 backdrop-blur-[2px] mt-60 z-[100] animate-in fade-in duration-200">
-          <div className="bg-white p-8 rounded-[32px] shadow-2xl w-full max-w-md border border-gray-100 relative">
-            <button 
-              onClick={() => setIsSubModalOpen(false)}
-              className="absolute right-6 top-6 p-2 hover:bg-gray-100 rounded-full transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-400" />
-            </button>
-            <h2 className="text-2xl font-black text-slate-900 mb-6">Дэд сэдэв нэмэх</h2>
-            <div className="space-y-4">
-              <label className="text-sm font-bold text-slate-500 uppercase">Module сонгох</label>
-              <select
-                className="w-full bg-slate-50 border border-slate-100 rounded-2xl px-5 py-4 outline-none focus:ring-4 focus:ring-emerald-500/5 transition-all font-medium text-slate-700"
-                value={selectedModuleId}
-                onChange={(e) => setSelectedModuleId(e.target.value)}
-              >
-                <option value="">Сонгоно уу...</option>
-                {modules.map((mod) => (
-                  <option key={mod.id} value={mod.id}>{mod.name}</option>
-                ))}
-              </select>
-
-              {selectedModuleId && (
-                <AddSubModuleForm
-                  moduleId={selectedModuleId}
-                  onAdd={(newSub) => {
-                    onAddSubModule(selectedModuleId, newSub);
-                    setIsSubModalOpen(false);
-                  }}
-                />
-              )}
-            </div>
-          </div>
-        </div>
-      )}
     </nav>
   );
 }
