@@ -39,3 +39,16 @@ export async function PATCH(
     );
   }
 }
+
+export async function GET(request: Request, { params }: { params: { id: string } }) {
+  const { id } = params;
+  try {
+    const module = await prisma.module.findUnique({
+      where: { id },
+      include: { subModules: true },
+    });
+    return NextResponse.json(module);
+  } catch (err) {
+    return NextResponse.json({ error: 'Failed to fetch module' }, { status: 500 });
+  }
+}

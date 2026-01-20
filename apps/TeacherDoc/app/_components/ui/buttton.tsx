@@ -90,3 +90,10 @@ export const Label: React.FC<{
     {children}
   </label>
 );
+
+export const CardContent: React.FC<{ children: React.ReactNode; className?: string }> = ({
+  children,
+  className = "",
+}) => {
+  return <div className={`p-6 ${className}`}>{children}</div>;
+};
