@@ -1,21 +1,27 @@
-"use client"
+'use client';
 
-import { motion } from "framer-motion"
-import { Lock, Check, Trophy } from "lucide-react"
-import { Badge } from "@/components/ui/badge"
-import { Progress } from "@/components/ui/progress"
-import type { Course } from "@/lib/majors-learning-data"
+import { motion } from 'framer-motion';
+import { Lock, Check, Trophy } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { Progress } from '@/components/ui/progress';
+import type { Course } from '@/lib/majors-learning-data';
 
 interface CourseListCardProps {
-  course: Course
-  status: "locked" | "in-progress" | "completed"
-  progress: number
-  lessonsCompleted: number
-  onClick: () => void
+  course: Course;
+  status: 'locked' | 'in-progress' | 'completed';
+  progress: number;
+  lessonsCompleted: number;
+  onClick: () => void;
 }
 
-export function CourseListCard({ course, status, progress, lessonsCompleted, onClick }: CourseListCardProps) {
-  const isLocked = status === "locked"
+export function CourseListCard({
+  course,
+  status,
+  progress,
+  lessonsCompleted,
+  onClick,
+}: CourseListCardProps) {
+  const isLocked = status === 'locked';
 
   return (
     <motion.button
@@ -25,15 +31,19 @@ export function CourseListCard({ course, status, progress, lessonsCompleted, onC
       whileTap={!isLocked ? { scale: 0.98 } : {}}
       className={`w-full p-6 rounded-2xl border-2 text-left transition-all ${
         isLocked
-          ? "bg-muted/30 border-border/50 opacity-50 cursor-not-allowed"
-          : "bg-card/80 border-border hover:border-primary hover:bg-card"
+          ? 'bg-muted/30 border-border/50 opacity-50 cursor-not-allowed'
+          : 'bg-card/80 border-border hover:border-primary hover:bg-card'
       }`}
     >
       <div className="flex items-start gap-4">
         {/* Icon */}
         <div
           className={`w-16 h-16 rounded-2xl flex items-center justify-center text-3xl ${
-            isLocked ? "bg-muted" : status === "completed" ? "bg-emerald-500/20" : "bg-primary/20"
+            isLocked
+              ? 'bg-muted'
+              : status === 'completed'
+                ? 'bg-emerald-500/20'
+                : 'bg-primary/20'
           }`}
         >
           {course.icon}
@@ -44,9 +54,11 @@ export function CourseListCard({ course, status, progress, lessonsCompleted, onC
           <div className="flex items-start justify-between mb-2">
             <div>
               <h3 className="text-xl font-bold mb-1">{course.titleMn}</h3>
-              <p className="text-sm text-muted-foreground">{course.subtitleMn}</p>
+              <p className="text-sm text-muted-foreground">
+                {course.subtitleMn}
+              </p>
             </div>
-            {status === "completed" && (
+            {status === 'completed' && (
               <div className="w-8 h-8 rounded-full bg-emerald-500 flex items-center justify-center">
                 <Check className="w-5 h-5 text-white" />
               </div>
@@ -63,13 +75,25 @@ export function CourseListCard({ course, status, progress, lessonsCompleted, onC
 
           {/* Stats */}
           <div className="flex items-center gap-4 text-sm">
-            <Badge variant={status === "completed" ? "default" : status === "in-progress" ? "secondary" : "outline"}>
-              {status === "completed" ? "Дууссан" : status === "in-progress" ? "Үргэлжилж байна" : "Түгжээтэй"}
+            <Badge
+              variant={
+                status === 'completed'
+                  ? 'default'
+                  : status === 'in-progress'
+                    ? 'secondary'
+                    : 'outline'
+              }
+            >
+              {status === 'completed'
+                ? 'Дууссан'
+                : status === 'in-progress'
+                  ? 'Үргэлжилж байна'
+                  : 'Түгжээтэй'}
             </Badge>
             {!isLocked && (
               <>
                 <span className="text-muted-foreground">
-                  {lessonsCompleted} / {course.lessons.length} хичээл
+                  {lessonsCompleted} / {course.lessons?.length ?? 0} хичээл{' '}
                 </span>
                 <div className="flex items-center gap-1 text-primary font-semibold">
                   <Trophy className="w-4 h-4" />+{course.xpReward} XP
@@ -80,5 +104,5 @@ export function CourseListCard({ course, status, progress, lessonsCompleted, onC
         </div>
       </div>
     </motion.button>
-  )
+  );
 }

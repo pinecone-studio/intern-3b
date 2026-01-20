@@ -2,7 +2,6 @@
   "name": "@intern-3b/source",
   "version": "0.0.0",
   "license": "MIT",
-  "scripts": {},
   "private": true,
   "dependencies": {
     "@expo/metro-config": "~54.0.9",
@@ -46,7 +45,7 @@
     "@nx/expo": "^22.3.3",
     "@nx/jest": "22.3.3",
     "@nx/js": "22.3.3",
-    "@nx/next": "22.3.3",
+    "@nx/next": "^22.3.3",
     "@nx/react": "22.3.3",
     "@nx/workspace": "22.3.3",
     "@swc-node/register": "~1.9.1",
@@ -94,8 +93,6 @@
   },
   "workspaces": [
     "apps/*",
-    "/apps/unitok-mobile",
-    "/apps/unitok-web",
     "libs/*"
   ]
 }

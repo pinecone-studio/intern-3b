@@ -1,0 +1,5 @@
+{
+  "buildCommand": "yarn nx build $BUILD_APP",
+  "outputDirectory": "dist/apps/$BUILD_APP/.next",
+  "framework": "nextjs"
+}
