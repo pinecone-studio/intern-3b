@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Check, X, ArrowLeft, ArrowRight, Trophy } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -35,6 +35,11 @@ export function LessonView({ lesson, onComplete, onExit }: LessonViewProps) {
 
   const questions = lesson.questions;
   const currentQuestion = questions[currentQuestionIndex];
+  useEffect(() => {
+    setSelectedAnswer(null);
+    setIsCorrect(null);
+    setShowContinue(false);
+  }, [currentQuestionIndex, lesson.id]);
 
   // ✅ CONTENT-ONLY LESSON (no questions)
   if (!lesson?.questions || lesson.questions.length === 0) {
@@ -56,7 +61,7 @@ export function LessonView({ lesson, onComplete, onExit }: LessonViewProps) {
 
         <div className="flex-1 flex items-center justify-center">
           <div className="text-center max-w-xl px-4">
-            <h2 className="text-3xl font-bold mb-4">{lesson.title}</h2>
+            <h2 className="text-3xl font-bold mb-4">{lesson.titleMn}</h2>
             <p className="text-muted-foreground mb-8">
               Энэ хичээл нь унших зориулалттай байна.
             </p>
@@ -162,6 +167,7 @@ export function LessonView({ lesson, onComplete, onExit }: LessonViewProps) {
 
               <div className="space-y-4">
                 {currentQuestion.answersMn.map((answer, index) => {
+                  const answerKey = `${currentQuestion.id}-${index}`;
                   const isSelected = selectedAnswer === index;
                   const isCorrectAnswer =
                     index === currentQuestion.correctIndex;
@@ -171,7 +177,7 @@ export function LessonView({ lesson, onComplete, onExit }: LessonViewProps) {
 
                   return (
                     <motion.button
-                      key={index}
+                      key={answerKey}
                       onClick={() => handleAnswerClick(index)}
                       disabled={selectedAnswer !== null}
                       whileHover={

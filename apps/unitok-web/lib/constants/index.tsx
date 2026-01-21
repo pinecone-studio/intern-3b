@@ -1,5 +1,4 @@
-import { Course, Review, TicketHistoryItem } from '@/lib/types';
-
+import type { Course, Review, TicketHistoryItem } from '../types';
 
 export const mockCourses: Course[] = [
   {
@@ -108,3 +107,14 @@ export const mockTicketHistory: TicketHistoryItem[] = [
   },
 ];
 
+export function getCourseById(id: number): Course | undefined {
+  return mockCourses.find((c) => c.id === id);
+}
+
+export function getReviewsByCourseId(courseId: number): Review[] {
+  return mockReviews.filter((r) => r.courseId === courseId);
+}
+
+export function calculateTotalTickets(history: TicketHistoryItem[]): number {
+  return history.reduce((sum, item) => sum + item.amount, 0);
+}

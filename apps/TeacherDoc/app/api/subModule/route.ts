@@ -14,31 +14,24 @@ export async function GET() {
   }
 }
 
-export async function POST(request: Request) {
+export async function POST(req: Request) {
   try {
-    const body = await request.json();
-    const { name, moduleId } = body;
+    const { moduleId, name } = await req.json();
 
-    if (!name || !moduleId) {
-      return NextResponse.json(
-        { error: 'Missing name or moduleId' },
-        { status: 400 },
-      );
+    if (!moduleId || !name) {
+      return NextResponse.json({ error: "moduleId болон name шаардлагатай" }, { status: 400 });
     }
 
     const newSubModule = await prisma.subModule.create({
-      data: { name, moduleId },
+      data: {
+        name,
+        moduleId,
+      },
     });
 
-    return NextResponse.json(
-      { data: newSubModule, message: 'Submodule created successfully' },
-      { status: 201 },
-    );
-  } catch (error) {
-    console.error('Create SubModule Error:', error);
-    return NextResponse.json(
-      { error: 'Failed to create submodule' },
-      { status: 500 },
-    );
+    return NextResponse.json(newSubModule);
+  } catch (err) {
+    console.error(err);
+    return NextResponse.json({ error: "subModule нэмэхэд алдаа гарлаа" }, { status: 500 });
   }
 }
