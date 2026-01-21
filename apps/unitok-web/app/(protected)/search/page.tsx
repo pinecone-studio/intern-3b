@@ -1,65 +1,51 @@
-'use client';
+"use client"
 
-import { useState, useRef, useEffect } from 'react';
-import { useRouter, useSearchParams } from 'next/navigation';
-import { Search, Home } from 'lucide-react';
-import { Input } from '@intern-3b/shadcn';
-
-import { Suspense } from 'react';
-import { AppHeader } from '@/components/AppHeader';
-import { BottomNav } from '@/components/BottomNav';
-import { mockCourses } from '@/lib/constants';
-import { Course } from '@/lib/types';
-import { SearchFilters } from '@/components/search/SearchFilters';
-import { CourseSearchResultItem } from '@/components/search/CourseSearchResultItem';
+import { useState, useRef, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
+import { Search, Home, User } from "lucide-react"
+import { mockCourses } from "@/lib/mock-data"
+import { Suspense } from "react"
+import { Course } from "@/lib/types"
+import { AppHeader } from "@/components/AppHeader"
+import { Button, Input } from "@intern-3b/shadcn"
+import { SearchFilters } from "@/features/search/SearchFilters"
+import { CourseSearchResultItem } from "@/features/search/CourseSearchResultItem"
+import { BottomNav } from "@/features/main/_components/BottomNav"
 
 function SearchPageContent() {
-  const router = useRouter();
-  const searchParams = useSearchParams();
+  const router = useRouter()
+  const searchParams = useSearchParams()
 
-  const initialQuery = searchParams.get('q') || '';
-  const initialType =
-    (searchParams.get('type') as 'course' | 'professor') || 'course';
+  const initialQuery = searchParams.get("q") || ""
+  const initialType = (searchParams.get("type") as "course" | "professor") || "course"
 
-  const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [searchType, setSearchType] = useState<'course' | 'professor'>(
-    initialType,
-  );
-  const searchInputRef = useRef<HTMLInputElement>(null);
+  const [searchQuery, setSearchQuery] = useState(initialQuery)
+  const [searchType, setSearchType] = useState<"course" | "professor">(initialType)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     if (searchInputRef.current) {
-      searchInputRef.current.focus();
+      searchInputRef.current.focus()
     }
-  }, []);
+  }, [])
 
   const navItems = [
-    {
-      id: 'home',
-      label: 'Нүүр',
-      icon: <Home className="h-5 w-5" />,
-      onClick: () => router.push('/'),
-    },
-    {
-      id: 'search',
-      label: 'Хайх',
-      icon: <Search className="h-5 w-5" />,
-      onClick: () => router.push('/search'),
-    },
-  ];
+    { id: "home", label: "Нүүр", icon: <Home className="h-5 w-5" />, onClick: () => router.push("/") },
+    { id: "search", label: "Хайх", icon: <Search className="h-5 w-5" />, onClick: () => router.push("/search") },
+  ]
 
-  const filteredCourses = mockCourses.filter((course: Course) => {
-    const query = searchQuery.toLowerCase();
-    if (searchType === 'course') {
-      return course.name.toLowerCase().includes(query);
+  const filteredCourses = mockCourses.filter((course) => {
+    const query = searchQuery.toLowerCase()
+    if (searchType === "course") {
+      return course.name.toLowerCase().includes(query)
     } else {
-      return course.professor.toLowerCase().includes(query);
+      return course.professor.toLowerCase().includes(query)
     }
-  });
+  })
 
   const handleSelectCourse = (course: Course) => {
-    router.push(`/courses/${course.id}`);
-  };
+    router.push(`/courses/${course.id}`)
+  }
 
   return (
     <div className="flex flex-col min-h-screen bg-background max-w-md mx-auto">
@@ -84,26 +70,20 @@ function SearchPageContent() {
         {filteredCourses.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-64 px-4 text-center">
             <Search className="h-12 w-12 text-muted-foreground/40 mb-3" />
-            <h3 className="text-sm font-semibold text-foreground mb-1">
-              Үр дүн олдсонгүй
-            </h3>
-            <p className="text-xs text-muted-foreground">
-              Өөр түлхүүр үгээр хайж үзнэ үү
-            </p>
+            <h3 className="text-sm font-semibold text-foreground mb-1">Үр дүн олдсонгүй</h3>
+            <p className="text-xs text-muted-foreground">Өөр түлхүүр үгээр хайж үзнэ үү</p>
           </div>
         ) : (
           <div className="divide-y divide-border">
-            {filteredCourses.map((course: Course) => (
-              <button
+            {filteredCourses.map((course) => (
+              <Button
                 key={course.id}
+                variant="ghost"
                 onClick={() => handleSelectCourse(course)}
-                className="w-full px-4 py-3 text-left hover:bg-accent/50 transition-colors active:bg-accent"
+                className="w-full px-4 py-3 h-auto justify-start text-left rounded-none cursor-pointer"
               >
-                <CourseSearchResultItem
-                  course={course}
-                  searchType={searchType}
-                />
-              </button>
+                <CourseSearchResultItem course={course} searchType={searchType} />
+              </Button>
             ))}
           </div>
         )}
@@ -111,7 +91,7 @@ function SearchPageContent() {
 
       <BottomNav items={navItems} activeId="search" />
     </div>
-  );
+  )
 }
 
 export default function SearchPage() {
@@ -119,5 +99,5 @@ export default function SearchPage() {
     <Suspense fallback={null}>
       <SearchPageContent />
     </Suspense>
-  );
+  )
 }
