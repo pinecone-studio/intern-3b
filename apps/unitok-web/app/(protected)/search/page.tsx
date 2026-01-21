@@ -10,8 +10,8 @@ import { AppHeader } from '@/components/AppHeader';
 import { BottomNav } from '@/components/BottomNav';
 import { mockCourses } from '@/lib/constants';
 import { Course } from '@/lib/types';
-import { SearchFilters } from '@/components/SearchFilters';
-import { CourseSearchResultItem } from '@/components/CourseSearchResultItem';
+import { SearchFilters } from '@/components/search/SearchFilters';
+import { CourseSearchResultItem } from '@/components/search/CourseSearchResultItem';
 
 function SearchPageContent() {
   const router = useRouter();
