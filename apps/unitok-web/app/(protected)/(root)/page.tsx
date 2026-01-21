@@ -1,7 +1,7 @@
-import HomeF from '@/features/home/Home';
+import Main from "@/features/main/Main";
 
 const HomePage = () => {
-  return <HomeF />;
+  return <Main/>
 };
 
 export default HomePage;

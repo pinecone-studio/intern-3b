@@ -1,6 +1,3 @@
-// import { ExamHeader } from "./exam-header"
-// import { BlurredExamPreview } from "./blurred-exam-preview"
-// import { TicketUnlockSection } from "./ticket-unlock-section"
 import { BlurredExamPreview } from './BlurredExamPreview';
 import { ExamHeader } from './ExamHeader';
 import { TicketUnlockSection } from './TicketUnlockSection';

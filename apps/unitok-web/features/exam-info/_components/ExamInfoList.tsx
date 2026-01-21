@@ -1,6 +1,4 @@
 import { Ticket } from 'lucide-react';
-// import { LockedExamCard } from "./locked-exam-card"
-// import { RevealedExamCard } from "./revealed-exam-card"
 import { ExamInfo, UserVote } from '../type';
 import { LockedExamCard } from './LockedExamCard';
 import { RevealedExamCard } from './RevealedExamCard';
