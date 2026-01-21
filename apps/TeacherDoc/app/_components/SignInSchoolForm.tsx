@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import FormInput from './FormInput';
 import FormButton from './FormButton';
-import { waitForDebugger } from 'inspector';
+
 
 export default function SignInSchoolForm() {
   const [formData, setFormData] = useState({
     phoneNumber: '',
-    password: ' ',
+    password: '',
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
