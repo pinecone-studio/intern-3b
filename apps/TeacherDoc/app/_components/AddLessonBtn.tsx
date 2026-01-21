@@ -7,22 +7,27 @@ import 'react-quill-new/dist/quill.snow.css';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
-type SavePayload = {
-  title: string;
-  richTextHtml: string;
-  files: File[];
-};
-
 type AddButtonProps = {
-  onSave?: (payload: SavePayload) => void;
+  moduleId: string;
+  subModuleId: string;
+  teacherId: string;
+  onSaved?: () => void; // хадгалсны дараа list refresh хийх бол
 };
 
-export default function AddButton({ onSave }: AddButtonProps) {
+export default function AddButton({
+  moduleId,
+  subModuleId,
+  teacherId,
+  onSaved,
+}: AddButtonProps) {
   const [open, setOpen] = useState(false);
 
   const [title, setTitle] = useState('');
   const [richTextHtml, setRichTextHtml] = useState('');
   const [files, setFiles] = useState<File[]>([]);
+
+  const [saving, setSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
   const closeModal = () => setOpen(false);
   const openModal = () => setOpen(true);
@@ -31,16 +36,7 @@ export default function AddButton({ onSave }: AddButtonProps) {
     setTitle('');
     setRichTextHtml('');
     setFiles([]);
-  };
-
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const payload: SavePayload = { title, richTextHtml, files };
-    onSave?.(payload);
-
-    closeModal();
-    resetForm();
+    setErrorMsg(null);
   };
 
   // Toolbar тохиргоо
@@ -72,7 +68,6 @@ export default function AddButton({ onSave }: AddButtonProps) {
     if (!selected.length) return;
 
     setFiles((prev) => [...prev, ...selected]);
-
     e.target.value = '';
   };
 
@@ -82,11 +77,64 @@ export default function AddButton({ onSave }: AddButtonProps) {
 
   const clearAll = () => setFiles([]);
 
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setErrorMsg(null);
+
+    // багахан validation
+    if (!moduleId || !subModuleId || !teacherId) {
+      setErrorMsg('moduleId / subModuleId / teacherId заавал хэрэгтэй байна.');
+      return;
+    }
+    if (!title && !richTextHtml && files.length === 0) {
+      setErrorMsg('Хадгалах мэдээлэл алга байна.');
+      return;
+    }
+
+    try {
+      setSaving(true);
+
+      const fd = new FormData();
+      fd.append('title', title);
+      fd.append('richText', richTextHtml);
+
+      fd.append('moduleId', moduleId);
+      fd.append('subModuleId', subModuleId);
+      fd.append('teacherId', teacherId);
+
+      files.forEach((f) => fd.append('files', f));
+
+      const res = await fetch('/api/lesson', {
+        method: 'POST',
+        body: fd,
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        setErrorMsg(data?.error ?? 'Failed to save document');
+        return;
+      }
+
+      closeModal();
+      resetForm();
+      onSaved?.();
+    } catch (err) {
+      console.error(err);
+      setErrorMsg('Network error: Failed to save');
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <div>
       <button
         type="button"
-        onClick={openModal}
+        onClick={() => {
+          setErrorMsg(null);
+          openModal();
+        }}
         className="cursor-pointer flex flex-col w-[370px] rounded border justify-center bg-white items-center h-[280px]"
       >
         <div className="px-8 py-5 bg-emerald-400 rounded-full">
@@ -138,6 +186,12 @@ export default function AddButton({ onSave }: AddButtonProps) {
                       ✕
                     </button>
                   </div>
+
+                  {errorMsg && (
+                    <div className="mt-4 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+                      {errorMsg}
+                    </div>
+                  )}
 
                   <form onSubmit={handleSave} className="mt-6 space-y-4">
                     {/* Title */}
@@ -241,6 +295,7 @@ export default function AddButton({ onSave }: AddButtonProps) {
                           resetForm();
                         }}
                         className="rounded-xl border px-5 py-3 font-semibold hover:bg-gray-50"
+                        disabled={saving}
                       >
                         Cancel
                       </button>
@@ -248,9 +303,12 @@ export default function AddButton({ onSave }: AddButtonProps) {
                       <button
                         type="submit"
                         className="rounded-xl bg-emerald-500 px-5 py-3 font-extrabold text-white hover:bg-emerald-600 disabled:opacity-50"
-                        disabled={!title && !richTextHtml && files.length === 0}
+                        disabled={
+                          saving ||
+                          (!title && !richTextHtml && files.length === 0)
+                        }
                       >
-                        Хадгалах
+                        {saving ? 'Хадгалж байна...' : 'Хадгалах'}
                       </button>
                     </div>
                   </form>

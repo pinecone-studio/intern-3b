@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 
 import { prisma } from '@/lib/prisma';
+import { title } from 'process';
 
 export async function GET() {
   try {
@@ -36,6 +37,7 @@ export async function POST(request: Request) {
         subModuleId,
         moduleId,
         teacherId,
+        title
       },
     });
 
