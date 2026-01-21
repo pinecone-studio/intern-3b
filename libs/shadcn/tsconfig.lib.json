@@ -1,7 +1,13 @@
 {
   "extends": "../../../tsconfig.base.json",
   "compilerOptions": {
+    "composite": true,
+
     "outDir": "dist",
+    "rootDir": "src",
+    "jsx": "react-jsx",
+    "moduleResolution": "node",
+
     "types": [
       "node",
       "@nx/react/typings/cssmodule.d.ts",
@@ -9,8 +15,7 @@
       "next",
       "@nx/next/typings/image.d.ts"
     ],
-    "rootDir": "src",
-    "jsx": "react-jsx",
+
     "tsBuildInfoFile": "dist/tsconfig.lib.tsbuildinfo"
   },
   "exclude": [
@@ -18,14 +23,8 @@
     "dist",
     "jest.config.ts",
     "jest.config.cts",
-    "src/**/*.spec.ts",
-    "src/**/*.test.ts",
-    "src/**/*.spec.tsx",
-    "src/**/*.test.tsx",
-    "src/**/*.spec.js",
-    "src/**/*.test.js",
-    "src/**/*.spec.jsx",
-    "src/**/*.test.jsx"
+    "src/**/*.spec.*",
+    "src/**/*.test.*"
   ],
-  "include": ["src/**/*.js", "src/**/*.jsx", "src/**/*.ts", "src/**/*.tsx"]
+  "include": ["src/**/*"]
 }
