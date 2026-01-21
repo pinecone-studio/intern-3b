@@ -1,14 +1,18 @@
+'use client';
+
 import { Button } from '@intern-3b/shadcn';
 import { Search } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
 const SearchButton = () => {
+  const router = useRouter();
+
   return (
     <Button
       variant="ghost"
       size="icon"
-      onClick={() => redirect('/search')}
+      onClick={() => router.replace('/search')}
       aria-label="Хайх"
       className="cursor-pointer"
     >

@@ -1,18 +1,17 @@
 'use client';
 
 import { Star } from 'lucide-react';
-
 import { Course, Review } from '@/lib/types';
 import { HomeReviewItem } from '@/components/HomeReviewItem';
-
+import { Button } from '@intern-3b/shadcn';
 
 interface HomeFeedProps {
   reviews: Review[];
   courses: Course[];
-  onSelectCourse: (course: Course) => void;
+  // onSelectCourse: (course: Course) => void;
 }
 
-export function HomeFeed({ reviews, courses, onSelectCourse }: HomeFeedProps) {
+export function HomeFeed({ reviews, courses }: HomeFeedProps) {
   if (reviews.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center h-64 px-4 text-center">
@@ -34,13 +33,13 @@ export function HomeFeed({ reviews, courses, onSelectCourse }: HomeFeedProps) {
         if (!course) return null;
 
         return (
-          <button
+          <Button
             key={review.id}
-            onClick={() => onSelectCourse(course)}
+            // onClick={() => onSelectCourse(course)}
             className="w-full hover:bg-accent/50 transition-colors active:bg-accent"
           >
             <HomeReviewItem review={review} course={course} />
-          </button>
+          </Button>
         );
       })}
     </div>

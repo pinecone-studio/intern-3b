@@ -1,14 +1,18 @@
+'use client';
+
 import { Button } from '@intern-3b/shadcn';
 import { Ticket } from 'lucide-react';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 
-const TicketButton = () => {
+const TicketButton = ({ url }: { url: string }) => {
+  const router = useRouter();
+
   return (
     <Button
       variant="ghost"
       size="sm"
-      onClick={() => redirect('/tickets')}
+      onClick={() => router.replace(url)}
       className="flex items-center gap-1.5 px-2 py-1 cursor-pointer"
     >
       <Ticket className="h-4 w-4" />

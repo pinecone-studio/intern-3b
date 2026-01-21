@@ -1,34 +1,19 @@
-'use client';
-import { redirect } from 'next/navigation';
-import { ArrowLeft, X } from 'lucide-react';
+import { mockTicketHistory, calculateTotalTickets } from '@/lib/mock-data';
 import { TicketHistoryItemRow } from './_components/TicketHistoryItemRow';
-import { calculateTotalTickets, mockTicketHistory } from '@/lib/constants';
+import BackButton from '@/components/buttons/BackButton';
+import CloseButton from '@/components/buttons/CloseButton';
 
-export default function TicketHistory() {
+export default function TicketsPage() {
   const totalTickets = calculateTotalTickets(mockTicketHistory);
-
-  const handleBack = () => {
-    redirect('/');
-  };
 
   return (
     <div className="flex flex-col min-h-screen bg-background max-w-md mx-auto">
       <header className="sticky top-0 z-10 flex items-center justify-between h-14 px-4 bg-card border-b border-border">
-        <button
-          onClick={handleBack}
-          className="p-2 -ml-2 rounded-lg hover:bg-accent active:bg-accent/80 transition-colors"
-        >
-          <ArrowLeft className="h-5 w-5 text-foreground" />
-        </button>
+        <BackButton url="/" />
         <h1 className="text-base font-semibold text-foreground">
           Үнэлгээний тасалбар
         </h1>
-        <button
-          onClick={handleBack}
-          className="p-2 -mr-2 rounded-lg hover:bg-accent active:bg-accent/80 transition-colors"
-        >
-          <X className="h-5 w-5 text-foreground" />
-        </button>
+        <CloseButton url="/" />
       </header>
 
       <div className="flex items-center justify-between px-4 py-3 bg-card border-b border-border">
