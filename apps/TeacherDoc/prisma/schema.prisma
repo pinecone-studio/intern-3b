@@ -29,7 +29,7 @@ model Document {
   image       String[]
   subModuleId String
   moduleId    String
-  teacherId   String
+  teacherId   String?
   title       String
 }
 
