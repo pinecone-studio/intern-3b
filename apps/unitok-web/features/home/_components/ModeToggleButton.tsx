@@ -1,11 +1,12 @@
 'use client';
+
 import { useTheme } from '@/lib/providers/ThemeProvider';
 import { Button } from '@intern-3b/shadcn';
 import { Moon, Sun } from 'lucide-react';
-import React from 'react';
 
 const ModeToggleButton = () => {
   const { theme, toggleTheme } = useTheme();
+
   return (
     <Button
       variant="ghost"
