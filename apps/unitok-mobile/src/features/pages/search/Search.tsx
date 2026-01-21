@@ -1,14 +1,12 @@
-import { Text, TextInput, View } from 'react-native';
-import Navbar from '../../componentsr/Navbar';
+import { TextInput, View } from 'react-native';
 import { useRef, useState } from 'react';
-import { useRouter } from 'expo-router';
 import { useSearchParams } from 'expo-router/build/hooks';
-import { SearchByFilters } from '../../componentsr/SearchByFilters';
-import SearchResultsSection from '../../componentsr/SearchResultsSection';
-import { mockCourses } from '../../lib/mockDatas';
+import { mockCourses } from '../../../lib/mockDatas';
+import Navbar from '../../../components/Navbar';
+import { SearchByFilters } from '../../../components/SearchByFilters';
+import SearchResultsSection from '../../../components/SearchResultsSection';
 
-export default function App() {
-
+export default function Search() {
   const searchParams = useSearchParams();
   const initialQuery = searchParams.get('q') || '';
   const initialType =
@@ -34,7 +32,7 @@ export default function App() {
     <View className=" bg-[#1e1e1e] flex flex-col min-h-screen max-w-md ">
       <Navbar title={'Хайх'} />
       <View className="px-4 py-2 bg-card border-b border-border">
-        <View className='mb-2'>
+        <View className="mb-2">
           <TextInput
             ref={searchInputRef}
             className="pl-10 h-10 bg-background border-[#404040] text-foreground rounded-lg"

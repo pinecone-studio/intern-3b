@@ -1,14 +1,40 @@
 {
   "name": "unitok-mobile",
   "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "/apps/unitok-mobile/src",
+  "sourceRoot": "apps/unitok-mobile/src",
   "projectType": "application",
-  "tags": ["scope:unitok type:mobile"],
-  "// targets": "to see all targets run: nx show project unitok-mobile --web",
+  "tags": ["scope:unitok", "type:mobile"],
   "targets": {
     "start": {
       "executor": "@nx/expo:start",
       "options": {}
+    },
+
+    "serve": {
+      "executor": "@nx/expo:serve",
+      "options": {}
+    },
+
+    "run-ios": {
+      "executor": "@nx/expo:run-ios",
+      "options": {}
+    },
+
+    "run-android": {
+      "executor": "@nx/expo:run-android",
+      "options": {}
+    },
+
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "tsc --noEmit -p apps/unitok-mobile/tsconfig.app.json"
+      }
+    },
+
+    "build": {
+      "executor": "@nx/expo:build",
+      "outputs": []
     }
   }
 }
