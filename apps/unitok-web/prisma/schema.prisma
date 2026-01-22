@@ -10,15 +10,34 @@ datasource db {
 model User {
   id            String   @id @default(cuid())
   nickname      String?
-  points        Int      @default(0)
+  tickets       Int      @default(0)
 
   universityId  String
   university    University @relation(fields: [universityId], references: [id])
 
   reviews       Review[]
   examInfos     ExamInfo[]
+  likes         Like[]
+  ticketLogs    TicketTransaction[]
 
   createdAt     DateTime @default(now())
+}
+
+model TicketTransaction {
+  id          String   @id @default(cuid())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  amount      Int
+  action      TicketAction
+
+  reviewId    String?
+  examInfoId  String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId, createdAt])
 }
 
 model University {
@@ -52,7 +71,6 @@ model Professor {
   department    Department @relation(fields: [departmentId], references: [id])
 
   courses       Course[]
-  reviews       Review[]
 
   createdAt     DateTime @default(now())
 }
@@ -76,11 +94,8 @@ model Review {
   userId        String
   user          User     @relation(fields: [userId], references: [id])
 
-  professorId   String
-  professor     Professor @relation(fields: [professorId], references: [id])
-
-  courseId      String?
-  course        Course?  @relation(fields: [courseId], references: [id])
+  courseId      String
+  course        Course   @relation(fields: [courseId], references: [id])
 
   rating        Int
   comment       String?
@@ -90,13 +105,16 @@ model Review {
 
   workload      WorkloadLevel
   difficulty    DifficultyLevel
+  teamWork      TeamWorkLevel
   attendance    AttendanceType
   examCount     ExamCount
 
+  likes         Like[]
+
   createdAt     DateTime @default(now())
 
-  @@unique([userId, professorId, courseId])
-  @@index([professorId])
+  @@unique([userId, courseId])
+  @@index([courseId])
 }
 
 model ExamInfo {
@@ -117,13 +135,15 @@ model ExamInfo {
   preparationTip   String?
   recommendation   String?
 
-  costPoints       Int      @default(1)
+  costTickets      Int      @default(10)
 
   formats          ExamInfoFormat[]
   questions        ExamQuestion[]
+  likes            Like[]
 
   createdAt        DateTime @default(now())
 
+  @@unique([userId, courseId])
   @@index([courseId])
 }
 
@@ -143,7 +163,32 @@ model ExamQuestion {
   text        String
 }
 
-// change the enums and point costs later
+model Like {
+  id          String   @id @default(cuid())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  reviewId    String?
+  review      Review?   @relation(fields: [reviewId], references: [id])
+
+  examInfoId  String?
+  examInfo    ExamInfo? @relation(fields: [examInfoId], references: [id])
+
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, reviewId])
+  @@unique([userId, examInfoId])
+}
+
+enum TicketAction {
+  REVIEW_CREATED
+  EXAM_INFO_CREATED
+  EXAM_INFO_VIEWED
+  REVIEW_LIKED
+  EXAM_INFO_LIKED
+}
+
 enum Semester {
   SPRING
   SUMMER
@@ -163,10 +208,17 @@ enum DifficultyLevel {
   HARD
 }
 
+enum TeamWorkLevel {
+  ALWAYS
+  OFTEN
+  RARELY
+}
+
 enum AttendanceType {
+  CALL
+  ONLINE
+  MIX
   NONE
-  CHECK
-  MIXED
 }
 
 enum ExamCount {
@@ -183,6 +235,9 @@ enum ExamType {
 }
 
 enum ExamFormat {
+  ONLINE
+  PAPER
+  SPEAK
   OBJECTIVE
   ESSAY
   CODING
