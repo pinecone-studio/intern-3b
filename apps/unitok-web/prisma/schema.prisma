@@ -8,9 +8,183 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique //nemsen
-  email     String   @unique
-  name      String
-  createdAt DateTime @default(now())
+  id            String   @id @default(cuid())
+  nickname      String?
+  points        Int      @default(0)
+
+  universityId  String
+  university    University @relation(fields: [universityId], references: [id])
+
+  reviews       Review[]
+  examInfos     ExamInfo[]
+
+  createdAt     DateTime @default(now())
+}
+
+model University {
+  id           String   @id @default(cuid())
+  name         String
+  country      String
+
+  departments  Department[]
+  users        User[]
+
+  createdAt    DateTime @default(now())
+}
+
+model Department {
+  id            String   @id @default(cuid())
+  name          String
+
+  universityId  String
+  university    University @relation(fields: [universityId], references: [id])
+
+  professors    Professor[]
+
+  createdAt     DateTime @default(now())
+}
+
+model Professor {
+  id            String   @id @default(cuid())
+  name          String
+
+  departmentId  String
+  department    Department @relation(fields: [departmentId], references: [id])
+
+  courses       Course[]
+  reviews       Review[]
+
+  createdAt     DateTime @default(now())
+}
+
+model Course {
+  id            String   @id @default(cuid())
+  name          String
+
+  professorId   String
+  professor     Professor @relation(fields: [professorId], references: [id])
+
+  reviews       Review[]
+  examInfos     ExamInfo[]
+
+  createdAt     DateTime @default(now())
+}
+
+model Review {
+  id            String   @id @default(cuid())
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  professorId   String
+  professor     Professor @relation(fields: [professorId], references: [id])
+
+  courseId      String?
+  course        Course?  @relation(fields: [courseId], references: [id])
+
+  rating        Int
+  comment       String?
+
+  semester      Semester
+  year          Int
+
+  workload      WorkloadLevel
+  difficulty    DifficultyLevel
+  attendance    AttendanceType
+  examCount     ExamCount
+
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, professorId, courseId])
+  @@index([professorId])
+}
+
+model ExamInfo {
+  id               String   @id @default(cuid())
+
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+
+  courseId         String
+  course           Course  @relation(fields: [courseId], references: [id])
+
+  semester         Semester
+  year             Int
+
+  examType         ExamType
+  difficulty       DifficultyLevel
+
+  preparationTip   String?
+  recommendation   String?
+
+  costPoints       Int      @default(1)
+
+  formats          ExamInfoFormat[]
+  questions        ExamQuestion[]
+
+  createdAt        DateTime @default(now())
+
+  @@index([courseId])
+}
+
+model ExamInfoFormat {
+  id          String     @id @default(cuid())
+  examInfoId  String
+  examInfo    ExamInfo  @relation(fields: [examInfoId], references: [id])
+  format      ExamFormat
+
+  @@unique([examInfoId, format])
+}
+
+model ExamQuestion {
+  id          String     @id @default(cuid())
+  examInfoId  String
+  examInfo    ExamInfo  @relation(fields: [examInfoId], references: [id])
+  text        String
+}
+
+// change the enums and point costs later
+enum Semester {
+  SPRING
+  SUMMER
+  FALL
+  WINTER
+}
+
+enum WorkloadLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum DifficultyLevel {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum AttendanceType {
+  NONE
+  CHECK
+  MIXED
+}
+
+enum ExamCount {
+  NONE
+  ONE
+  TWO
+  THREE
+  FOUR_PLUS
+}
+
+enum ExamType {
+  MIDTERM
+  FINAL
+}
+
+enum ExamFormat {
+  OBJECTIVE
+  ESSAY
+  CODING
+  PRESENTATION
 }
