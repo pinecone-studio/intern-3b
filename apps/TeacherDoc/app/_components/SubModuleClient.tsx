@@ -97,11 +97,6 @@ export default function SubModuleClient(props: {
                 Материалуудыг эндээс үзэх, нэмэх боломжтой
               </p>
             </div>
-
-            <div className="text-sm font-semibold text-slate-500">
-              SubModule ID:{' '}
-              <span className="text-slate-700">{subModuleId}</span>
-            </div>
           </div>
         </div>
 
@@ -183,9 +178,9 @@ export default function SubModuleClient(props: {
                   />
 
                   <div className="mt-5 flex items-center justify-between text-xs font-bold">
-                    <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700">
+                    {/* <span className="rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-emerald-700">
                       {d.subModuleId.slice(0, 8)}…
-                    </span>
+                    </span> */}
                     <span className="text-slate-400 group-hover:text-slate-500 transition">
                       ID: {d.id.slice(0, 8)}…
                     </span>
