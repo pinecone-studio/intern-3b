@@ -1,53 +1,125 @@
-// import { verifyWebhook } from '@clerk/nextjs/webhooks'
-// import { NextRequest } from 'next/server'
+import { Webhook } from 'svix';
+import { headers } from 'next/headers';
+import type { WebhookEvent } from '@clerk/clerk-sdk-node';
+import { prisma } from '@/lib/prisma';
 
-import { Prisma } from "@/apps/unitok-web/generated/prisma"
-import { prisma } from "@/apps/unitok-web/lib/prisma"
-import { ClerkUserCreated, ClerkUserDeleted } from "@/apps/unitok-web/lib/types/clerks"
+export async function POST(req: Request): Promise<Response> {
+  try {
+    console.log('🔔 Clerk webhook received');
 
-// export async function POST(req: NextRequest) {
-//   try {
-//     const evt = await verifyWebhook(req)
+    // --------------------------------------------------
+    // 1️⃣ Validate environment variable
+    // --------------------------------------------------
+    const secret = process.env.CLERK_WEBHOOK_SECRET;
+    if (!secret) {
+      console.error('❌ CLERK_WEBHOOK_SECRET is missing');
+      return new Response('Webhook secret missing', { status: 500 });
+    }
 
-//     // Do something with payload
-//     // For this guide, log payload to console
-//     const { id } = evt.data
-//     const eventType = evt.type
-//     console.log(`Received webhook with ID ${id} and event type of ${eventType}`)
-//     console.log('Webhook payload:', evt.data)
+    // --------------------------------------------------
+    // 2️⃣ Read raw request body (REQUIRED for Svix)
+    // --------------------------------------------------
+    const payload = await req.text();
 
-//     return new Response('Webhook received', { status: 200 })
-//   } catch (err) {
-//     console.error('Error verifying webhook:', err)
-//     return new Response('Error verifying webhook', { status: 400 })
-//   }
-// }
+    // --------------------------------------------------
+    // 3️⃣ Read and validate Svix headers
+    // --------------------------------------------------
+    const headerList = await headers();
 
-// import { prisma } from '@/lib/prisma'
-// import { ClerkUserCreated, ClerkUserDeleted } from '@/lib/types/clerks'
+    const svixId = headerList.get('svix-id');
+    const svixTimestamp = headerList.get('svix-timestamp');
+    const svixSignature = headerList.get('svix-signature');
 
+    if (!svixId || !svixTimestamp || !svixSignature) {
+      console.error('❌ Missing Svix headers', {
+        svixId,
+        svixTimestamp,
+        svixSignature,
+      });
+      return new Response('Missing Svix headers', { status: 400 });
+    }
 
-export async function handleUserCreated(user: ClerkUserCreated) {
-  const email = user.email_addresses[0]?.email_address
-  if (!email) return
+    // --------------------------------------------------
+    // 4️⃣ Verify webhook signature
+    // --------------------------------------------------
+    const webhook = new Webhook(secret);
 
-  const name =
-    `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim() || null
+    let event: WebhookEvent;
+    try {
+      event = webhook.verify(payload, {
+        'svix-id': svixId,
+        'svix-timestamp': svixTimestamp,
+        'svix-signature': svixSignature,
+      }) as WebhookEvent;
+    } catch (error) {
+      console.error('❌ Invalid webhook signature', error);
+      return new Response('Invalid signature', { status: 400 });
+    }
 
-  await prisma.user.create({
-    data: {
-      clerkId: user.id,
-      email,
-      name,
-      universityId: "jdgdigf"
-    },
-  })
+    console.log('✅ Webhook verified:', event.type);
+
+    // --------------------------------------------------
+    // 5️⃣ Handle events
+    // --------------------------------------------------
+    if (event.type === 'user.created') {
+      const user = event.data;
+
+      const primaryEmailId = user.primary_email_address_id;
+
+      const email = user.email_addresses.find(
+        (e) => e.id === primaryEmailId,
+      )?.email_address;
+
+      if (!email) {
+        console.error('❌ Primary email not available yet', {
+          primaryEmailId,
+          emailAddresses: user.email_addresses,
+        });
+
+        // IMPORTANT: do NOT fail the webhook
+        return new Response('Email not ready', { status: 200 });
+      }
+
+      const universityId = await getOrCreateDefaultUniversityId();
+
+      await prisma.user.upsert({
+        where: { clerkId: user.id },
+        update: {},
+        create: {
+          clerkId: user.id,
+          email,
+          tickets: 0,
+          universityId,
+        },
+      });
+
+      console.log('✅ User created in DB:', user.id);
+    }
+
+    return new Response('OK', { status: 200 });
+  } catch (error) {
+    console.error('❌ Webhook fatal error:', error);
+
+    return new Response(
+      error instanceof Error ? error.message : 'Webhook error',
+      { status: 400 },
+    );
+  }
 }
 
-export async function handleUserDeleted(user: ClerkUserDeleted) {
-  await prisma.user.deleteMany({
-    where: {
-      clerkId: user.id,
+// ------------------------------------------------------
+// Helper: Create default University ONCE (idempotent)
+// Requires University.name to be @unique
+// ------------------------------------------------------
+async function getOrCreateDefaultUniversityId(): Promise<string> {
+  const university = await prisma.university.upsert({
+    where: { name: 'Unknown' },
+    update: {},
+    create: {
+      name: 'Unknown',
+      country: 'N/A',
     },
-  })
+  });
+
+  return university.id;
 }
