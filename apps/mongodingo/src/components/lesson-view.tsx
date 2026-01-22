@@ -14,13 +14,11 @@ interface LessonViewProps {
   onExit: () => void;
 }
 export function LessonView({ lesson, onComplete, onExit }: LessonViewProps) {
-  if (!lesson || !lesson.questions || lesson.questions.length === 0) {
+  if (!lesson?.questions || lesson.questions.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center h-full">
-        <h2 className="text-2xl font-bold mb-4">Асуулт олдсонгүй</h2>
-        <Button onClick={onExit} variant="outline">
-          Буцах
-        </Button>
+      <div className="fixed inset-0 bg-background z-50 flex flex-col">
+        ...
+        <Button onClick={() => onComplete(lesson.xp)}>Дуусгах</Button>
       </div>
     );
   }
@@ -69,7 +67,9 @@ export function LessonView({ lesson, onComplete, onExit }: LessonViewProps) {
             <Button
               size="lg"
               className="gap-2"
-              onClick={() => onComplete(lesson.xp)}
+              onClick={() => {
+                onComplete(lesson.xp);
+              }}
             >
               Дуусгах <Trophy className="w-5 h-5" /> +{lesson.xp} XP
             </Button>
@@ -105,7 +105,6 @@ export function LessonView({ lesson, onComplete, onExit }: LessonViewProps) {
     if (currentQuestionIndex < totalQuestions - 1) {
       setCurrentQuestionIndex((prev) => prev + 1);
 
-      // 🔥 FULL RESET PER QUESTION
       setSelectedAnswer(null);
       setIsCorrect(null);
       setShowContinue(false);
