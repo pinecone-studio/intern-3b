@@ -1,5 +1,6 @@
-import { Course } from "@/lib/types"
+
 import { Star } from "lucide-react"
+import { Course } from "../../exam-info/type"
 
 
 interface CourseSearchResultItemProps {

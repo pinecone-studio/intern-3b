@@ -1,7 +1,9 @@
-import { mockTicketHistory, calculateTotalTickets } from '@/lib/mock-data';
+
+import BackButton from '../../components/buttons/BackButton';
+import CloseButton from '../../components/buttons/CloseButton';
+import { calculateTotalTickets, mockTicketHistory } from '../../lib/mock-data';
 import { TicketHistoryItemRow } from './_components/TicketHistoryItemRow';
-import BackButton from '@/components/buttons/BackButton';
-import CloseButton from '@/components/buttons/CloseButton';
+
 
 export default function TicketsPage() {
   const totalTickets = calculateTotalTickets(mockTicketHistory);

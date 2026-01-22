@@ -1,6 +1,7 @@
 "use client"
 
-import { Review } from "@/lib/types"
+
+import { Review } from "../../course-detail/type"
 import { ReviewItem } from "./ReviewItem"
 
 

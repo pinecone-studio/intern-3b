@@ -1,10 +1,9 @@
 "use client"
-
-import { Course } from "@/lib/types"
 import { Star } from "lucide-react"
 import { useState } from "react"
 import { RatingFilterDropdown } from "./RatingFilterDropdown"
 import { SortDropdown } from "./SortDropdown"
+import { Course } from "../../exam-info/type"
 
 interface ReviewsHeaderProps {
   course: Course

@@ -1,7 +1,8 @@
 "use client"
 
-import { Review } from "@/lib/types"
+
 import { Star, ThumbsUp, AlertCircle } from "lucide-react"
+import { Review } from "../../course-detail/type"
 
 
 interface ReviewItemProps {

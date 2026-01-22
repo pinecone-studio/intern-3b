@@ -1,7 +1,8 @@
-import { Course, Review } from '@/lib/types';
+
 import { Star } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
 import LessonReviewCard from './LessonReviewCard';
+import { Course, Review } from '../lib/types';
 
 const HomePageMainSection = ({
   mockReviews,
