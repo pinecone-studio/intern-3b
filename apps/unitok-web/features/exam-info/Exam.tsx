@@ -4,12 +4,12 @@ import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import { ExamInfo, UserVote } from './type';
-import { getCourseById } from '@/lib/constants';
 import { AddExamForm } from '../add-exam-form/AddExamForm';
 import { AppHeader } from '../../components/AppHeader';
 import { FileText } from 'lucide-react';
 import { ExamInfoList } from './_components/ExamInfoList';
 import { AppButton } from '../../components/AppButton';
+import { getCourseById } from '../../lib/mock-data';
 
 export type { ExamInfo };
 

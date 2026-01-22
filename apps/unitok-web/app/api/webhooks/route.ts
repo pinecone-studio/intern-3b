@@ -1,6 +1,10 @@
 // import { verifyWebhook } from '@clerk/nextjs/webhooks'
 // import { NextRequest } from 'next/server'
 
+import { Prisma } from "@/apps/unitok-web/generated/prisma"
+import { prisma } from "@/apps/unitok-web/lib/prisma"
+import { ClerkUserCreated, ClerkUserDeleted } from "@/apps/unitok-web/lib/types/clerks"
+
 // export async function POST(req: NextRequest) {
 //   try {
 //     const evt = await verifyWebhook(req)
@@ -19,8 +23,8 @@
 //   }
 // }
 
-import { prisma } from '@/lib/prisma'
-import { ClerkUserCreated, ClerkUserDeleted } from '@/lib/types/clerks'
+// import { prisma } from '@/lib/prisma'
+// import { ClerkUserCreated, ClerkUserDeleted } from '@/lib/types/clerks'
 
 
 export async function handleUserCreated(user: ClerkUserCreated) {
@@ -35,6 +39,7 @@ export async function handleUserCreated(user: ClerkUserCreated) {
       clerkId: user.id,
       email,
       name,
+      universityId: "jdgdigf"
     },
   })
 }

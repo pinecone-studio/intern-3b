@@ -2,15 +2,15 @@
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
-import { Search, Home, Moon, Sun, Ticket, User } from "lucide-react"
-import { mockCourses, mockReviews, mockTicketHistory, calculateTotalTickets } from "@/lib/mock-data"
-import { useTheme } from "@/lib/providers/ThemeProvider"
-import { Course } from "@/lib/types"
-import { Login } from "@/components/Login"
-import { AppHeader } from "@/components/AppHeader"
-import { IconButton } from "@/components/buttons/IconButton"
+import { Search, Home, Moon, Sun, Ticket } from "lucide-react"
+import { useTheme } from "../../lib/providers/ThemeProvider"
+import { calculateTotalTickets, mockCourses, mockReviews, mockTicketHistory } from "../../lib/mock-data"
+import { Course } from "../exam-info/type"
+import { AppHeader } from "../../components/AppHeader"
+import { IconButton } from "../../components/buttons/IconButton"
 import { HomeFeed } from "./_components/HomeFeed"
 import { BottomNav } from "./_components/BottomNav"
+import { Login } from "../../components/Login"
 
 
 export default function HomePage() {
