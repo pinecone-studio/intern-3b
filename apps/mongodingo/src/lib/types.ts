@@ -26,6 +26,7 @@ export interface Major {
   challenges: string;
   futureScope: string;
   Skill: Skill[];
+  learningTime?: string;
 }
 
 export interface MajorCardProps {

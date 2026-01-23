@@ -202,7 +202,7 @@ export default async function MajorDetailPage({
             <div className="grid md:grid-cols-2 gap-4">
               {mockSkills.map((skill, index) => (
                 <div key={skill.id} className="flex items-start gap-3">
-                  <CheckCircle2 className="w-5 h-5 text-primary flex-shrink-0 mt-0.5" />
+                  <CheckCircle2 className="w-5 h-5 text-primary shrink-0 mt-0.5" />
                   <div>
                     <div className="font-medium">{skill.name}</div>
                     <div className="text-sm text-muted-foreground">
@@ -309,7 +309,15 @@ export default async function MajorDetailPage({
               className="bg-primary hover:bg-primary/90 text-primary-foreground text-lg h-12 px-8"
               asChild
             >
-              <Link href={`/learn/${major.id}`}>Энэ замаар эхлэх</Link>
+              <Link
+                href={
+                  major.id === 'software-engineering'
+                    ? `/learn/${major.id}/intro`
+                    : `/learn/${major.id}`
+                }
+              >
+                Энэ замаар эхлэх
+              </Link>
             </Button>
           </div>
         </div>
