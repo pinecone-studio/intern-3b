@@ -36,8 +36,8 @@ export default async function DocumentDetailPage({
             dangerouslySetInnerHTML={{ __html: doc.richText }}
           />
 
-          {doc.image?.map((url) => (
-            <img src={url} />
+          {doc.image?.map((url: string) => (
+            <img key={Math.random()} src={url} />
           ))}
         </div>
       </div>

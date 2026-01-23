@@ -9,7 +9,9 @@ datasource db {
 
 model User {
   id            String   @id @default(cuid())
-  nickname      String?
+  clerkId       String   @unique
+  email         String   @unique
+  name          String?
   tickets       Int      @default(0)
 
   universityId  String
@@ -42,7 +44,7 @@ model TicketTransaction {
 
 model University {
   id           String   @id @default(cuid())
-  name         String
+  name         String   @unique
   country      String
 
   departments  Department[]

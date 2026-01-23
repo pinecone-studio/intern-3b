@@ -1,8 +1,9 @@
 "use client"
 
 import { Star } from "lucide-react"
-import { Course, Review } from "@/lib/types"
 import { HomeReviewItem } from "./HomeReviewItem"
+import { Review } from "../../course-detail/type"
+import { Course } from "../../exam-info/type"
 
 interface HomeFeedProps {
   reviews: Review[]

@@ -1891,6 +1891,17 @@
     ckeditor5 "44.3.0"
     lodash-es "4.17.21"
 
+"@clerk/backend@^1.21.6":
+  version "1.34.0"
+  resolved "https://registry.yarnpkg.com/@clerk/backend/-/backend-1.34.0.tgz#e1b37954c8b2c89d7bbc1cc57349ac0d57719ca3"
+  integrity sha512-9rZ8hQJVpX5KX2bEpiuVXfpjhojQCiqCWADJDdCI0PCeKxn58Ep0JPYiIcczg4VKUc3a7jve9vXylykG2XajLQ==
+  dependencies:
+    "@clerk/shared" "^3.9.5"
+    "@clerk/types" "^4.59.3"
+    cookie "1.0.2"
+    snakecase-keys "8.0.1"
+    tslib "2.8.1"
+
 "@clerk/backend@^2.29.3":
   version "2.29.3"
   resolved "https://registry.yarnpkg.com/@clerk/backend/-/backend-2.29.3.tgz#f76250b8baf11b5f3412e048c717a757a79c41ca"
@@ -1955,6 +1966,16 @@
     "@clerk/shared" "^3.43.0"
     tslib "2.8.1"
 
+"@clerk/clerk-sdk-node@^5.1.6":
+  version "5.1.6"
+  resolved "https://registry.yarnpkg.com/@clerk/clerk-sdk-node/-/clerk-sdk-node-5.1.6.tgz#fc3d8cf6ed63d9c0956dc643557bb75ec91f9fa7"
+  integrity sha512-KeF5p0XP0gNoCx+YIHrfrkNNADBz8ZabwPAhOiJZ9Wo14r93WlzRA51IE0Qgteej8IpWwnvKu4/MpiV7FFoLqA==
+  dependencies:
+    "@clerk/backend" "^1.21.6"
+    "@clerk/shared" "^2.20.6"
+    "@clerk/types" "^4.40.2"
+    tslib "2.4.1"
+
 "@clerk/localizations@^3.35.0":
   version "3.35.0"
   resolved "https://registry.yarnpkg.com/@clerk/localizations/-/localizations-3.35.0.tgz#16d5d763794df97cb3af3d78f7acbff7ded3b6a0"
@@ -1974,10 +1995,34 @@
     server-only "0.0.1"
     tslib "2.8.1"
 
+"@clerk/shared@^2.20.6":
+  version "2.22.0"
+  resolved "https://registry.yarnpkg.com/@clerk/shared/-/shared-2.22.0.tgz#c5c5b6f24241370a0ebb0e0109e8812219f55f9a"
+  integrity sha512-VWBeddOJVa3sqUPdvquaaQYw4h5hACSG3EUDOW7eSu2F6W3BXUozyLJQPBJ9C0MuoeHhOe/DeV8x2KqOgxVZaQ==
+  dependencies:
+    "@clerk/types" "^4.46.1"
+    dequal "2.0.3"
+    glob-to-regexp "0.4.1"
+    js-cookie "3.0.5"
+    std-env "^3.7.0"
+    swr "^2.2.0"
+
 "@clerk/shared@^3.43.0":
   version "3.43.0"
   resolved "https://registry.yarnpkg.com/@clerk/shared/-/shared-3.43.0.tgz#e327bac7871d6cb73aca628e02a95332614dc4bf"
   integrity sha512-pj8jgV5TX7l0ClHMvDLG7Ensp1BwA63LNvOE2uLwRV4bx3j9s4oGHy5bZlLBoOxdvRPCMpQksHi/O0x1Y+obdw==
+  dependencies:
+    csstype "3.1.3"
+    dequal "2.0.3"
+    glob-to-regexp "0.4.1"
+    js-cookie "3.0.5"
+    std-env "^3.9.0"
+    swr "2.3.4"
+
+"@clerk/shared@^3.43.1", "@clerk/shared@^3.9.5":
+  version "3.43.1"
+  resolved "https://registry.yarnpkg.com/@clerk/shared/-/shared-3.43.1.tgz#2834a7792267163c6b884fcb88d85c990f54ca66"
+  integrity sha512-2Kd9WdD36G9PeUQQbRdfZZV3ALNbIo0SBfnVFdvwHy9ZmdnyScYTl2C9r5uEO0Ju0D34s+wRV11bDkeZN3aGiw==
   dependencies:
     csstype "3.1.3"
     dequal "2.0.3"
@@ -1992,6 +2037,13 @@
   integrity sha512-6m1FQSLFqb4L+ovMDxNIRSrw6I0ByVX5hs6slcevOaaD5UXNzSANWqVtKaU80AZwcm391lZqVS5fRisHt9tmXA==
   dependencies:
     "@clerk/shared" "^3.43.0"
+
+"@clerk/types@^4.40.2", "@clerk/types@^4.46.1", "@clerk/types@^4.59.3":
+  version "4.101.12"
+  resolved "https://registry.yarnpkg.com/@clerk/types/-/types-4.101.12.tgz#445569117b368e72b00c1c3b39222552456f8b4a"
+  integrity sha512-ePXOla3B1qgPtV0AzrLx2PVC3s/lsjOSYnuIFAxaIlRNT2+eb/BjeoqtTOcezwbdQ00jQ2RvXahdfZRSEuvZ7A==
+  dependencies:
+    "@clerk/shared" "^3.43.1"
 
 "@coinbase/wallet-sdk@4.3.0":
   version "4.3.0"
@@ -10139,6 +10191,11 @@ cookie-signature@~1.0.6:
   resolved "https://registry.yarnpkg.com/cookie-signature/-/cookie-signature-1.0.7.tgz#ab5dd7ab757c54e60f37ef6550f481c426d10454"
   integrity sha512-NXdYc3dLr47pBkpUCHtKSwIOQXLVn8dZEuywboCOJY/osA0wFSLlSawr3KN8qXJEyX66FcONTH8EIlVuK0yyFA==
 
+cookie@1.0.2:
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/cookie/-/cookie-1.0.2.tgz#27360701532116bd3f1f9416929d176afe1e4610"
+  integrity sha512-9Kr/j4O16ISv8zBBhJoi4bXOYNTkFLOqSL3UDB0njXxCXNezjeyVrJyGOWtgfs/q2km1gwBcfH8q1yEGoMYunA==
+
 cookie@~0.7.1:
   version "0.7.2"
   resolved "https://registry.yarnpkg.com/cookie/-/cookie-0.7.2.tgz#556369c472a2ba910f2979891b526b3436237ed7"
@@ -15448,6 +15505,11 @@ makeerror@1.0.12:
   dependencies:
     tmpl "1.0.5"
 
+map-obj@^4.1.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/map-obj/-/map-obj-4.3.0.tgz#9304f906e93faae70880da102a9f1df0ea8bb05a"
+  integrity sha512-hdN1wVrZbb29eBGiGjJbeP8JbKjq1urkHJ/LIP/NY48MZ1QVXUsQBV1G1zvYFHn1XE06cwjBsOI2K3Ulnj1YXQ==
+
 markdown-it@^14.0.0:
   version "14.1.0"
   resolved "https://registry.yarnpkg.com/markdown-it/-/markdown-it-14.1.0.tgz#3c3c5992883c633db4714ccb4d7b5935d98b7d45"
@@ -19295,6 +19357,15 @@ snake-case@^3.0.4:
     dot-case "^3.0.4"
     tslib "^2.0.3"
 
+snakecase-keys@8.0.1:
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/snakecase-keys/-/snakecase-keys-8.0.1.tgz#cd75429b9b575fb79c1273334b4926bf49da2911"
+  integrity sha512-Sj51kE1zC7zh6TDlNNz0/Jn1n5HiHdoQErxO8jLtnyrkJW/M5PrI7x05uDgY3BO7OUQYKCvmeMurW6BPUdwEOw==
+  dependencies:
+    map-obj "^4.1.0"
+    snake-case "^3.0.4"
+    type-fest "^4.15.0"
+
 sockjs@^0.3.24:
   version "0.3.24"
   resolved "https://registry.yarnpkg.com/sockjs/-/sockjs-0.3.24.tgz#c9bc8995f33a111bea0395ec30aa3206bdb5ccce"
@@ -19496,7 +19567,7 @@ stacktrace-parser@^0.1.10:
   dependencies:
     type-fest "^0.7.1"
 
-standardwebhooks@^1.0.0:
+standardwebhooks@1.0.0, standardwebhooks@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/standardwebhooks/-/standardwebhooks-1.0.0.tgz#5faa23ceacbf9accd344361101d9e3033b64324f"
   integrity sha512-BbHGOQK9olHPMvQNHWul6MYlrRTAOKn03rOe4A8O3CLWhNf4YHBqq2HJKKC+sfqpxiBY52pNeesD6jIiLDz8jg==
@@ -19523,6 +19594,11 @@ std-env@3.9.0:
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/std-env/-/std-env-3.9.0.tgz#1a6f7243b339dca4c9fd55e1c7504c77ef23e8f1"
   integrity sha512-UGvjygr6F6tpH7o2qyqR6QYpwraIjKSdtzyBdyytFOHmPZY917kwdwLG0RbOjWOnKmnm3PeHjaoLLMie7kPLQw==
+
+std-env@^3.7.0, std-env@^3.9.0:
+  version "3.10.0"
+  resolved "https://registry.yarnpkg.com/std-env/-/std-env-3.10.0.tgz#d810b27e3a073047b2b5e40034881f5ea6f9c83b"
+  integrity sha512-5GS12FdOZNliM5mAOxFRg7Ir0pWz8MdpYm6AY6VPkGpbA7ZzmbzNcBJQ0GPvvyWgcY7QAhCgf9Uy89I03faLkg==
 
 stop-iteration-iterator@^1.1.0:
   version "1.1.0"
@@ -19891,6 +19967,14 @@ svgo@^3.0.2, svgo@^3.2.0:
     csso "^5.0.5"
     picocolors "^1.0.0"
 
+svix@^1.84.1:
+  version "1.84.1"
+  resolved "https://registry.yarnpkg.com/svix/-/svix-1.84.1.tgz#9e086455acf01143fe0f90c5f618393c3e3591cf"
+  integrity sha512-K8DPPSZaW/XqXiz1kEyzSHYgmGLnhB43nQCMeKjWGCUpLIpAMMM8kx3rVVOSm6Bo6EHyK1RQLPT4R06skM/MlQ==
+  dependencies:
+    standardwebhooks "1.0.0"
+    uuid "^10.0.0"
+
 swr@2.3.4:
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/swr/-/swr-2.3.4.tgz#60bcb5b97cae157a6ef69eff0ed2beb9010eba69"
@@ -19898,6 +19982,14 @@ swr@2.3.4:
   dependencies:
     dequal "^2.0.3"
     use-sync-external-store "^1.4.0"
+
+swr@^2.2.0:
+  version "2.3.8"
+  resolved "https://registry.yarnpkg.com/swr/-/swr-2.3.8.tgz#aa15596321a34e575226a60576bade0b57adf7bf"
+  integrity sha512-gaCPRVoMq8WGDcWj9p4YWzCMPHzE0WNl6W8ADIx9c3JBEIdMkJGMzW+uzXvxHMltwcYACr9jP+32H8/hgwMR7w==
+  dependencies:
+    dequal "^2.0.3"
+    use-sync-external-store "^1.6.0"
 
 symbol-tree@^3.2.4:
   version "3.2.4"
@@ -20302,6 +20394,11 @@ tsconfig-paths@^4.1.2:
     minimist "^1.2.6"
     strip-bom "^3.0.0"
 
+tslib@2.4.1:
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.1.tgz#0d0bfbaac2880b91e22df0768e55be9753a5b17e"
+  integrity sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==
+
 tslib@2.8.1, tslib@^2.0.0, tslib@^2.0.3, tslib@^2.1.0, tslib@^2.3.0, tslib@^2.4.0, tslib@^2.6.2, tslib@^2.6.3, tslib@^2.8.0, tslib@^2.8.1:
   version "2.8.1"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.8.1.tgz#612efe4ed235d567e8aba5f2a5fab70280ade83f"
@@ -20400,7 +20497,7 @@ type-fest@^0.8.0:
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-0.8.1.tgz#09e249ebde851d3b1e48d27c105444667f17b83d"
   integrity sha512-4dbzIzqvjtgiM5rw1k5rEHtBANKmdudhGyBEajN01fEyhaAIhsoKNy6y7+IN93IfpFtwY9iqi7kD+xwKhQsNJA==
 
-type-fest@^4.39.1, type-fest@^4.41.0:
+type-fest@^4.15.0, type-fest@^4.39.1, type-fest@^4.41.0:
   version "4.41.0"
   resolved "https://registry.yarnpkg.com/type-fest/-/type-fest-4.41.0.tgz#6ae1c8e5731273c2bf1f58ad39cbae2c91a46c58"
   integrity sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==
@@ -20689,7 +20786,7 @@ use-sidecar@^1.1.3:
     detect-node-es "^1.1.0"
     tslib "^2.0.0"
 
-use-sync-external-store@^1.2.2, use-sync-external-store@^1.4.0, use-sync-external-store@^1.5.0:
+use-sync-external-store@^1.2.2, use-sync-external-store@^1.4.0, use-sync-external-store@^1.5.0, use-sync-external-store@^1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/use-sync-external-store/-/use-sync-external-store-1.6.0.tgz#b174bfa65cb2b526732d9f2ac0a408027876f32d"
   integrity sha512-Pp6GSwGP/NrPIrxVFAIkOQeyw8lFenOHijQWkUTrDvrF4ALqylP2C/KCkeS9dpUM3KvYRQhna5vt7IL95+ZQ9w==

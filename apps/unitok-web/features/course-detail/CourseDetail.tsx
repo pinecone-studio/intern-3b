@@ -3,7 +3,6 @@
 import { useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import { notFound } from 'next/navigation';
-import { getCourseById, getReviewsByCourseId } from '@/lib/constants';
 import { ExamInfo } from '../exam-info/type';
 import { CourseInfoData, RatingBreakdownItem } from './type';
 import { AppHeader } from '../../components/AppHeader';
@@ -14,6 +13,7 @@ import { ReviewPreviewSection } from './_components/ReviewPreviewSection';
 import { ExamPreviewSection } from './_components/ExamPreviewSection';
 import { TabNav } from './_components/TabNav';
 import { mockExamInfos } from '../exam-info/Exam';
+import { getCourseById, getReviewsByCourseId } from '../../lib/mock-data';
 
 export default function CourseDetail() {
   const router = useRouter();

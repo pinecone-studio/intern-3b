@@ -66,10 +66,7 @@ export default function LearnClient({ majorId }: { majorId: string }) {
       </div>
     );
   }
-
-  const courses = (major.Skill ?? [])
-    .map(mapCourseFromDb)
-    .filter((course: any) => course?.lessons?.length > 0);
+  const courses = (major.Skill ?? []).map(mapCourseFromDb).filter(Boolean);
 
   const currentCourse = courses.find(
     (course: any) => course.id === selectedCourseId,
@@ -110,6 +107,22 @@ export default function LearnClient({ majorId }: { majorId: string }) {
     return (completed / course.lessons.length) * 100;
   };
   const getNextPlayableLesson = (course: any) => {
+    console.log(
+      'NEXT LESSON DEBUG',
+      featuredCourse?.lessons.map((l: any) => ({
+        title: l.title,
+        completed: completedLessons.includes(l.id),
+        q: l.questionCount,
+      })),
+    );
+
+    const quizLesson = course.lessons.find(
+      (lesson: any) =>
+        !completedLessons.includes(lesson.id) && lesson.questionCount > 0,
+    );
+
+    if (quizLesson) return quizLesson;
+
     return course.lessons.find(
       (lesson: any) => !completedLessons.includes(lesson.id),
     );
@@ -163,15 +176,7 @@ export default function LearnClient({ majorId }: { majorId: string }) {
     setSelectedCourseId(courseId);
     setCurrentView('course');
   };
-
   const handleLessonClick = (lessonId: string) => {
-    const lesson = currentCourse?.lessons.find((l: any) => l.id === lessonId);
-
-    if (!lesson || lesson.questionCount === 0) {
-      alert('Энэ хичээлд асуулт хараахан алга байна');
-      return;
-    }
-
     setActiveLessonId(lessonId);
     setCurrentView('lesson');
   };

@@ -1,6 +1,7 @@
-import { Course, Review } from '@/lib/types';
+
 import { Star, ThumbsUp } from 'lucide-react';
 import { Dispatch, SetStateAction } from 'react';
+import { Course, Review } from '../lib/types';
 
 const LessonReviewCard = ({
   setSelectedCourse,
