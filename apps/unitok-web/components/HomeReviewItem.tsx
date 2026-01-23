@@ -1,5 +1,6 @@
-import { Course, Review } from '@/lib/types';
+
 import { Star, ThumbsUp } from 'lucide-react';
+import { Course, Review } from '../lib/types';
 
 interface HomeReviewItemProps {
   review: Review;

@@ -3,7 +3,6 @@ export function mapCourseFromDb(skill: any) {
 
   return {
     id: skill.id,
-
     titleMn: skill.name,
     subtitleMn: `${skill.Lesson.length} хичээл`,
     icon: '📘',
@@ -13,6 +12,7 @@ export function mapCourseFromDb(skill: any) {
       id: lesson.id,
       title: lesson.title,
       questionCount: lesson._count?.questions ?? 0,
+      type: lesson._count?.questions > 0 ? 'quiz' : 'content',
     })),
   };
 }

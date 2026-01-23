@@ -1,34 +1,31 @@
-import AddButton from '@/app/_components/AddLessonBtn';
-import { LessonCard } from '@/app/_components/lessonCard';
+import { prisma } from '@/lib/prisma';
+import SubModuleClient from '@/app/_components/SubModuleClient';
+import { notFound } from 'next/navigation';
 
-export default function SubModulePage() {
+export default async function SubModulePage({
+  params,
+}: {
+  params: { id?: string } | Promise<{ id?: string }>;
+}) {
+  const resolved = await Promise.resolve(params);
+  const subModuleId = resolved?.id;
+
+  if (!subModuleId) return notFound(); // эсвэл return <div>Invalid id</div>
+
+  const sub = await prisma.subModule.findUnique({
+    where: { id: subModuleId },
+    select: { id: true, name: true, moduleId: true },
+  });
+
+  if (!sub) return notFound();
+
   return (
-    <div className="flex flex-col gap-10 h-screen bg-blue-50 justify-start">
-      {/* lesson description  */}
-      <div className=" mt-10 mx-20">
-        <div className="bg-white py-5 border flex flex-col items-start gap-8 w-full px-10 rounded-xl">
-          <h2 className="font-bold text-xl">Хичээлийн тайлбар</h2>
-          <span className="text-xl  ">
-            Магадлалын үзэгдэл, тэдгээрийн төрөл, шинж чанарыг судална.
-          </span>
-        </div>
-      </div>
-
-      {/* lessons */}
-
-      {/* lessons title */}
-      <div className="mx-20 flex flex-col gap-3">
-        <h2 className="font-bold text-xl">Бэлтгэсэн багш нар</h2>
-        <span className="text-xl  ">
-          Энэ хичээлийг бэлтгэсэн багш нарын жагсаалт. Багш дээр дарж материалыг
-          үзнэ үү.
-        </span>
-      </div>
-
-      <div className="mx-20 flex flex-wrap gap-10 ">
-        <LessonCard />
-        <AddButton />
-      </div>
-    </div>
+    <SubModuleClient
+      subModuleId={sub.id}
+      moduleId={sub.moduleId}
+      subModuleName={sub.name}
+      teachers={[]}
+      teacherId={null}
+    />
   );
 }

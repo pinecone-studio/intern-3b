@@ -1,4 +1,4 @@
-import type { TicketHistoryItem } from '../types';
+import { TicketHistoryItem } from "../types";
 
 interface TicketHistoryItemRowProps {
   item: TicketHistoryItem;

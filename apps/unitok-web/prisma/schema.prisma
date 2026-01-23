@@ -8,9 +8,240 @@ datasource db {
 }
 
 model User {
-  id        String   @id @default(cuid())
-  clerkId   String   @unique //nemsen
-  email     String   @unique
-  name      String
-  createdAt DateTime @default(now())
+  id            String   @id @default(cuid())
+  clerkId       String   @unique
+  email         String   @unique
+  name          String?
+  tickets       Int      @default(0)
+
+  universityId  String
+  university    University @relation(fields: [universityId], references: [id])
+
+  reviews       Review[]
+  examInfos     ExamInfo[]
+  likes         Like[]
+  ticketLogs    TicketTransaction[]
+
+  createdAt     DateTime @default(now())
+}
+
+model TicketTransaction {
+  id          String   @id @default(cuid())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  amount      Int
+  action      TicketAction
+
+  reviewId    String?
+  examInfoId  String?
+
+  createdAt   DateTime @default(now())
+
+  @@index([userId, createdAt])
+}
+
+model University {
+  id           String   @id @default(cuid())
+  name         String   @unique
+  country      String
+
+  departments  Department[]
+  users        User[]
+
+  createdAt    DateTime @default(now())
+}
+
+model Department {
+  id            String   @id @default(cuid())
+  name          String
+
+  universityId  String
+  university    University @relation(fields: [universityId], references: [id])
+
+  professors    Professor[]
+
+  createdAt     DateTime @default(now())
+}
+
+model Professor {
+  id            String   @id @default(cuid())
+  name          String
+
+  departmentId  String
+  department    Department @relation(fields: [departmentId], references: [id])
+
+  courses       Course[]
+
+  createdAt     DateTime @default(now())
+}
+
+model Course {
+  id            String   @id @default(cuid())
+  name          String
+
+  professorId   String
+  professor     Professor @relation(fields: [professorId], references: [id])
+
+  reviews       Review[]
+  examInfos     ExamInfo[]
+
+  createdAt     DateTime @default(now())
+}
+
+model Review {
+  id            String   @id @default(cuid())
+
+  userId        String
+  user          User     @relation(fields: [userId], references: [id])
+
+  courseId      String
+  course        Course   @relation(fields: [courseId], references: [id])
+
+  rating        Int
+  comment       String?
+
+  semester      Semester
+  year          Int
+
+  workload      WorkloadLevel
+  difficulty    DifficultyLevel
+  teamWork      TeamWorkLevel
+  attendance    AttendanceType
+  examCount     ExamCount
+
+  likes         Like[]
+
+  createdAt     DateTime @default(now())
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+}
+
+model ExamInfo {
+  id               String   @id @default(cuid())
+
+  userId           String
+  user             User     @relation(fields: [userId], references: [id])
+
+  courseId         String
+  course           Course  @relation(fields: [courseId], references: [id])
+
+  semester         Semester
+  year             Int
+
+  examType         ExamType
+  difficulty       DifficultyLevel
+
+  preparationTip   String?
+  recommendation   String?
+
+  costTickets      Int      @default(10)
+
+  formats          ExamInfoFormat[]
+  questions        ExamQuestion[]
+  likes            Like[]
+
+  createdAt        DateTime @default(now())
+
+  @@unique([userId, courseId])
+  @@index([courseId])
+}
+
+model ExamInfoFormat {
+  id          String     @id @default(cuid())
+  examInfoId  String
+  examInfo    ExamInfo  @relation(fields: [examInfoId], references: [id])
+  format      ExamFormat
+
+  @@unique([examInfoId, format])
+}
+
+model ExamQuestion {
+  id          String     @id @default(cuid())
+  examInfoId  String
+  examInfo    ExamInfo  @relation(fields: [examInfoId], references: [id])
+  text        String
+}
+
+model Like {
+  id          String   @id @default(cuid())
+
+  userId      String
+  user        User     @relation(fields: [userId], references: [id])
+
+  reviewId    String?
+  review      Review?   @relation(fields: [reviewId], references: [id])
+
+  examInfoId  String?
+  examInfo    ExamInfo? @relation(fields: [examInfoId], references: [id])
+
+  createdAt   DateTime @default(now())
+
+  @@unique([userId, reviewId])
+  @@unique([userId, examInfoId])
+}
+
+enum TicketAction {
+  REVIEW_CREATED
+  EXAM_INFO_CREATED
+  EXAM_INFO_VIEWED
+  REVIEW_LIKED
+  EXAM_INFO_LIKED
+}
+
+enum Semester {
+  SPRING
+  SUMMER
+  FALL
+  WINTER
+}
+
+enum WorkloadLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum DifficultyLevel {
+  EASY
+  MEDIUM
+  HARD
+}
+
+enum TeamWorkLevel {
+  ALWAYS
+  OFTEN
+  RARELY
+}
+
+enum AttendanceType {
+  CALL
+  ONLINE
+  MIX
+  NONE
+}
+
+enum ExamCount {
+  NONE
+  ONE
+  TWO
+  THREE
+  FOUR_PLUS
+}
+
+enum ExamType {
+  MIDTERM
+  FINAL
+}
+
+enum ExamFormat {
+  ONLINE
+  PAPER
+  SPEAK
+  OBJECTIVE
+  ESSAY
+  CODING
+  PRESENTATION
 }

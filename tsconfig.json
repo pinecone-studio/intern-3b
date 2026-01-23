@@ -3,35 +3,19 @@
   "compileOnSave": false,
   "files": [],
   "references": [
-    {
-      "path": "./apps/sample-e2e"
-    },
-    {
-      "path": "./apps/sample"
-    },
-    {
-      "path": "./apps/TeacherDoc-e2e"
-    },
-    {
-      "path": "./apps/TeacherDoc"
-    },
-    {
-      "path": "./apps/mongodingo-e2e"
-    },
-    {
-      "path": "./apps/mongodingo"
-    },
-    {
-      "path": ".//apps/unitok-mobile"
-    },
-    {
-      "path": "./apps/unitok-web-e2e"
-    },
-    {
-      "path": ".//apps/unitok-web"
-    },
-    {
-      "path": "./libs/shadcn"
-    }
+    { "path": "./apps/sample-e2e" },
+    { "path": "./apps/sample" },
+
+    { "path": "./apps/TeacherDoc-e2e" },
+    { "path": "./apps/TeacherDoc" },
+
+    { "path": "./apps/mongodingo-e2e" },
+    { "path": "./apps/mongodingo" },
+
+    { "path": "./apps/unitok-mobile" },
+    { "path": "./apps/unitok-web-e2e" },
+    { "path": "./apps/unitok-web" },
+
+    { "path": "./libs/shadcn" }
   ]
 }

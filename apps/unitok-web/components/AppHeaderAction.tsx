@@ -4,8 +4,9 @@ import { Search, Ticket } from 'lucide-react';
 import { Button } from '@intern-3b/shadcn';
 
 import { Dispatch, SetStateAction } from 'react';
-import { ThemeToggleButton } from './ThemeToggleButton';
-import { IconButton } from './IconButton';
+import { ThemeToggleButton } from './buttons/ThemeToggleButton';
+import { IconButton } from './buttons/IconButton';
+;
 
 const AppHeaderAction = ({
   setCurrentPage,

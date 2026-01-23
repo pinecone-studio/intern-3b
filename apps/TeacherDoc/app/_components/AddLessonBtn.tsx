@@ -1,65 +1,83 @@
 'use client';
 
-import { Fragment, useMemo, useState, useEffect } from 'react';
-import { Dialog, Transition } from '@headlessui/react';
+import { useEffect, useMemo, useState } from 'react';
 import dynamic from 'next/dynamic';
 import 'react-quill-new/dist/quill.snow.css';
+import {
+  Plus,
+  Sparkles,
+  X,
+  Image as ImageIcon,
+  Loader2,
+  AlertTriangle,
+  Wand2, // Автоматаар бөглөх товчны icon
+} from 'lucide-react';
 
 const ReactQuill = dynamic(() => import('react-quill-new'), { ssr: false });
 
-type SavePayload = {
-  title: string;
-  richTextHtml: string;
-  files: File[];
-};
-
 type AddButtonProps = {
-  onSave?: (payload: SavePayload) => void;
+  moduleId: string;
+  subModuleId: string;
+  teacherId?: string | null;
+  onSaved?: () => void;
 };
 
-export default function AddButton({ onSave }: AddButtonProps) {
+export default function AddButton({
+  moduleId,
+  subModuleId,
+  teacherId,
+  onSaved,
+}: AddButtonProps) {
   const [open, setOpen] = useState(false);
 
   const [title, setTitle] = useState('');
   const [richTextHtml, setRichTextHtml] = useState('');
-  const [files, setFiles] = useState<File[]>([]);
+  const [images, setImages] = useState<File[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
-  const closeModal = () => setOpen(false);
-  const openModal = () => setOpen(true);
+  // ✅ Мэдээллийг автоматаар бөглөх функц
+  const handleMagicFill = () => {
+    setTitle(
+      `Тест материал: ${new Date().toLocaleDateString()} ${new Date().toLocaleTimeString()}`,
+    );
+    setRichTextHtml(`
+      <h2 style="color: #059669;">Шинэ хичээлийн агуулга</h2>
+      <p>Энэхүү материалыг системээс автоматаар туршилтын зорилгоор үүсгэв. Агуулга нь дараах хэсгүүдээс бүрдэнэ:</p>
+      <ul>
+        <li><b>Оршил:</b> Хичээлийн үндсэн ойлголт.</li>
+        <li><b>Үндсэн хэсэг:</b> Дэлгэрэнгүй тайлбар болон жишээ.</li>
+        <li><b>Дүгнэлт:</b> Сурч мэдсэн зүйлс.</li>
+      </ul>
+      <p>Хуудасны доод хэсэгт байгаа хадгалах товчийг дарж туршиж үзнэ үү.</p>
+    `);
+  };
+
+  const canSave = useMemo(() => {
+    const hasTitle = title.trim().length > 0;
+    const hasContent = richTextHtml.trim().length > 0;
+    return hasTitle && hasContent && !saving;
+  }, [title, richTextHtml, saving]);
 
   const resetForm = () => {
     setTitle('');
     setRichTextHtml('');
-    setFiles([]);
+    setImages([]);
+    setErrorMsg(null);
   };
 
-  const handleSave = (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const payload: SavePayload = { title, richTextHtml, files };
-    onSave?.(payload);
-
-    closeModal();
+  const close = () => {
+    if (saving) return;
+    setOpen(false);
     resetForm();
   };
 
-  // Toolbar тохиргоо
-  const quillModules = {
-    toolbar: [
-      [{ header: [1, 2, 3, false] }],
-      ['bold', 'italic', 'underline', 'strike'],
-      [{ list: 'ordered' }, { list: 'bullet' }],
-      ['link'],
-      ['clean'],
-    ],
-  };
-
   const previewUrls = useMemo(() => {
-    return files.map((f) => ({
+    return images.map((f) => ({
       file: f,
       url: URL.createObjectURL(f),
     }));
-  }, [files]);
+  }, [images]);
 
   useEffect(() => {
     return () => {
@@ -67,199 +85,234 @@ export default function AddButton({ onSave }: AddButtonProps) {
     };
   }, [previewUrls]);
 
-  const handlePickFiles = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const selected = Array.from(e.target.files ?? []);
-    if (!selected.length) return;
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') close();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [open, saving]);
 
-    setFiles((prev) => [...prev, ...selected]);
-
-    e.target.value = '';
+  const onPickImages = (files: FileList | null) => {
+    if (!files) return;
+    const arr = Array.from(files);
+    const onlyImages = arr.filter((f) => f.type.startsWith('image/'));
+    setImages((prev) => [...prev, ...onlyImages]);
   };
 
-  const removeAt = (idx: number) => {
-    setFiles((prev) => prev.filter((_, i) => i !== idx));
+  const removeImage = (index: number) => {
+    setImages((prev) => prev.filter((_, i) => i !== index));
   };
 
-  const clearAll = () => setFiles([]);
+  const clearAll = () => setImages([]);
+
+  const save = async () => {
+    setErrorMsg(null);
+    if (!title.trim()) return setErrorMsg('Гарчиг оруулна уу.');
+    if (!richTextHtml.trim())
+      return setErrorMsg('Материалын текст оруулна уу.');
+    if (!moduleId || !subModuleId) return setErrorMsg('ID алга.');
+
+    setSaving(true);
+    try {
+      let uploadedUrls: string[] = [];
+      if (images.length > 0) {
+        const fdUpload = new FormData();
+        for (const img of images) fdUpload.append('files', img);
+        const upRes = await fetch('/api/upload', {
+          method: 'POST',
+          body: fdUpload,
+        });
+        const upData = await upRes.json().catch(() => ({}));
+        if (!upRes.ok) {
+          setErrorMsg(upData?.error || 'Upload error');
+          return;
+        }
+        uploadedUrls = Array.isArray(upData?.urls) ? upData.urls : [];
+      }
+
+      const res = await fetch('/api/document', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: title.trim(),
+          richText: richTextHtml,
+          subModuleId,
+          moduleId,
+          teacherId: teacherId?.trim() || null,
+          images: uploadedUrls,
+        }),
+      });
+
+      if (!res.ok) throw new Error('Хадгалахад алдаа гарлаа.');
+      close();
+      onSaved?.();
+    } catch (e) {
+      setErrorMsg('Алдаа гарлаа.');
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
-    <div>
+    <div className="w-full">
       <button
-        type="button"
-        onClick={openModal}
-        className="cursor-pointer flex flex-col w-[370px] rounded border justify-center bg-white items-center h-[280px]"
+        onClick={() => setOpen(true)}
+        className="group relative w-full min-h-[260px] rounded-3xl border border-slate-200 bg-white/70 p-6 shadow-[0_12px_30px_rgba(2,6,23,0.06)] transition hover:-translate-y-0.5"
       >
-        <div className="px-8 py-5 bg-emerald-400 rounded-full">
-          <span className="font-extrabold text-4xl">+</span>
+        <div className="relative flex flex-col items-center justify-center text-center">
+          <div className="mb-4 grid h-14 w-14 place-items-center rounded-2xl bg-white border border-emerald-100 text-emerald-700 shadow-sm">
+            <Plus />
+          </div>
+          <div className="text-lg font-extrabold text-slate-900 group-hover:text-emerald-700 transition">
+            Материал нэмэх
+          </div>
+          <div className="mt-5 inline-flex items-center gap-2 rounded-full border border-emerald-200 bg-white px-4 py-2 text-xs font-bold text-emerald-700">
+            <Sparkles size={16} /> Шинэ материал оруулах
+          </div>
         </div>
       </button>
 
-      <Transition appear show={open} as={Fragment}>
-        <Dialog as="div" className="relative z-50" onClose={closeModal}>
-          <Transition.Child
-            as={Fragment}
-            enter="ease-out duration-200"
-            enterFrom="opacity-0"
-            enterTo="opacity-100"
-            leave="ease-in duration-150"
-            leaveFrom="opacity-100"
-            leaveTo="opacity-0"
-          >
-            <div className="fixed inset-0 bg-black/40" />
-          </Transition.Child>
-
-          <div className="fixed inset-0 overflow-y-auto">
-            <div className="min-h-full flex items-center justify-center p-4">
-              <Transition.Child
-                as={Fragment}
-                enter="ease-out duration-200"
-                enterFrom="opacity-0 scale-95 translate-y-2"
-                enterTo="opacity-100 scale-100 translate-y-0"
-                leave="ease-in duration-150"
-                leaveFrom="opacity-100 scale-100 translate-y-0"
-                leaveTo="opacity-0 scale-95 translate-y-2"
-              >
-                <Dialog.Panel className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl border">
-                  <div className="flex items-start justify-between gap-4">
-                    <div>
-                      <Dialog.Title className="text-xl font-extrabold">
-                        Шинэ материал нэмэх
-                      </Dialog.Title>
-                      <p className="text-sm text-gray-500 mt-1">
-                        Title + richtext + зургууд оруулаад хадгалаарай.
-                      </p>
-                    </div>
-
+      {open && (
+        <div className="fixed inset-0 z-[9999]">
+          <div
+            className="absolute inset-0 bg-slate-950/50 backdrop-blur-[2px]"
+            onClick={close}
+          />
+          <div className="relative z-[9999] flex min-h-screen items-start justify-center p-4 overflow-y-auto">
+            <div className="w-full max-w-4xl my-10">
+              <div className="w-full rounded-3xl border border-slate-200 bg-white shadow-2xl flex flex-col max-h-[85vh] overflow-hidden">
+                {/* Header */}
+                <div className="flex items-start justify-between gap-4 border-b bg-emerald-50/30 p-6 shrink-0">
+                  <div>
+                    <h3 className="text-2xl font-extrabold text-slate-900">
+                      Материал нэмэх
+                    </h3>
+                    <p className="text-sm text-slate-600">
+                      Гарчиг болон агуулгаа оруулна уу.
+                    </p>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {/* ✅ Magic Fill Button */}
                     <button
                       type="button"
-                      onClick={closeModal}
-                      className="rounded-lg px-3 py-1 text-sm border hover:bg-gray-50"
+                      onClick={handleMagicFill}
+                      className="flex items-center gap-2 px-4 py-2 rounded-xl bg-emerald-600 text-white text-sm font-bold shadow-lg hover:bg-emerald-700 transition"
                     >
-                      ✕
+                      <Wand2 size={16} />
+                      Magic Fill
+                    </button>
+                    <button
+                      onClick={close}
+                      className="p-2 hover:bg-slate-100 rounded-xl"
+                    >
+                      <X />
                     </button>
                   </div>
+                </div>
 
-                  <form onSubmit={handleSave} className="mt-6 space-y-4">
-                    {/* Title */}
-                    <div>
-                      <label className="block text-sm font-semibold mb-1">
-                        Title
-                      </label>
-                      <input
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        className="w-full rounded-xl border px-4 py-3 outline-none focus:ring-2 focus:ring-emerald-200"
-                        placeholder="Жишээ: Лекц 1 — Танилцуулга"
+                {/* Body */}
+                <div className="p-6 md:p-8 space-y-6 overflow-y-auto">
+                  {errorMsg && (
+                    <div className="p-4 bg-red-50 text-red-700 rounded-2xl border border-red-100 text-sm font-bold flex gap-2">
+                      <AlertTriangle size={18} />
+                      {errorMsg}
+                    </div>
+                  )}
+                  <div className="grid gap-2">
+                    <label className="text-sm font-bold text-slate-800">
+                      Гарчиг
+                    </label>
+                    <input
+                      value={title}
+                      onChange={(e) => setTitle(e.target.value)}
+                      className="w-full rounded-2xl border border-slate-200 px-4 py-3 outline-none focus:ring-4 focus:ring-emerald-200/50"
+                      placeholder="Жишээ: Лекц 1"
+                      disabled={saving}
+                    />
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-bold text-slate-800">
+                      Агуулга (Rich Text)
+                    </label>
+                    <div className="rounded-2xl border border-slate-200 overflow-hidden h-[280px]">
+                      <ReactQuill
+                        theme="snow"
+                        value={richTextHtml}
+                        onChange={setRichTextHtml}
+                        className="h-full"
                       />
                     </div>
-
-                    {/* Rich text */}
-                    <div>
-                      <label className="block text-sm font-semibold mb-1">
-                        Rich Text
-                      </label>
-
-                      <div className="rounded-xl overflow-hidden border">
-                        <ReactQuill
-                          theme="snow"
-                          value={richTextHtml}
-                          onChange={setRichTextHtml}
-                          modules={quillModules}
-                          placeholder="Энд текстээ бичнэ..."
-                          className="h-52"
-                        />
-                      </div>
-                    </div>
-
-                    {/* Image upload (multiple) */}
-                    <div>
-                      <label className="block text-sm font-semibold mb-1">
-                        Зургууд
-                      </label>
-
-                      <div className="flex items-center gap-4">
-                        <label className="cursor-pointer inline-flex items-center justify-center rounded-xl border px-4 py-3 hover:bg-gray-50">
-                          <input
-                            type="file"
-                            accept="image/*"
-                            multiple
-                            className="hidden"
-                            onChange={handlePickFiles}
-                          />
-                          Зураг сонгох
-                        </label>
-
-                        {files.length ? (
+                  </div>
+                  <div className="grid gap-2">
+                    <label className="text-sm font-bold text-slate-800 flex justify-between">
+                      Зургууд{' '}
+                      <span>
+                        {images.length > 0 && (
                           <button
-                            type="button"
-                            className="text-sm text-red-600 hover:underline"
                             onClick={clearAll}
+                            className="text-red-500 hover:underline"
                           >
-                            Бүгдийг арилгах ({files.length})
+                            Арилгах
                           </button>
-                        ) : (
-                          <span className="text-sm text-gray-500">
-                            (сонгосон зураг байхгүй)
-                          </span>
                         )}
-                      </div>
-
-                      {/* Preview grid */}
-                      {previewUrls.length > 0 && (
-                        <div className="mt-3 grid grid-cols-2 sm:grid-cols-3 gap-3">
-                          {previewUrls.map((p, idx) => (
-                            <div key={p.url} className="rounded-xl border p-2">
-                              <img
-                                src={p.url}
-                                alt={`preview-${idx}`}
-                                className="w-full h-32 object-cover rounded-lg"
-                              />
-                              <div className="mt-2 flex items-center justify-between gap-2">
-                                <p className="text-xs text-gray-600 truncate">
-                                  {p.file.name}
-                                </p>
-                                <button
-                                  type="button"
-                                  onClick={() => removeAt(idx)}
-                                  className="text-xs text-red-600 hover:underline shrink-0"
-                                >
-                                  Арилгах
-                                </button>
-                              </div>
-                            </div>
-                          ))}
+                      </span>
+                    </label>
+                    <label className="cursor-pointer inline-flex items-center gap-2 rounded-2xl border border-slate-200 bg-white px-4 py-3 font-bold hover:bg-slate-50 transition">
+                      <ImageIcon className="text-emerald-700" /> Сонгох
+                      <input
+                        type="file"
+                        multiple
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => onPickImages(e.target.files)}
+                      />
+                    </label>
+                    <div className="grid grid-cols-3 gap-4">
+                      {previewUrls.map((p, idx) => (
+                        <div
+                          key={idx}
+                          className="relative aspect-video rounded-xl overflow-hidden border"
+                        >
+                          <img
+                            src={p.url}
+                            className="object-cover w-full h-full"
+                          />
+                          <button
+                            onClick={() => removeImage(idx)}
+                            className="absolute top-1 right-1 bg-red-500 text-white rounded-full p-1"
+                          >
+                            <X size={12} />
+                          </button>
                         </div>
-                      )}
+                      ))}
                     </div>
+                  </div>
+                </div>
 
-                    {/* Actions */}
-                    <div className="pt-2 flex items-center justify-end gap-3">
-                      <button
-                        type="button"
-                        onClick={() => {
-                          closeModal();
-                          resetForm();
-                        }}
-                        className="rounded-xl border px-5 py-3 font-semibold hover:bg-gray-50"
-                      >
-                        Cancel
-                      </button>
-
-                      <button
-                        type="submit"
-                        className="rounded-xl bg-emerald-500 px-5 py-3 font-extrabold text-white hover:bg-emerald-600 disabled:opacity-50"
-                        disabled={!title && !richTextHtml && files.length === 0}
-                      >
-                        Хадгалах
-                      </button>
-                    </div>
-                  </form>
-                </Dialog.Panel>
-              </Transition.Child>
+                {/* Footer */}
+                <div className="flex items-center justify-end gap-3 border-t p-6 shrink-0 bg-slate-50">
+                  <button
+                    onClick={close}
+                    disabled={saving}
+                    className="px-6 py-3 font-bold text-slate-600"
+                  >
+                    Болих
+                  </button>
+                  <button
+                    onClick={save}
+                    disabled={!canSave}
+                    className="bg-emerald-600 text-white px-8 py-3 rounded-2xl font-extrabold shadow-lg hover:bg-emerald-700 disabled:opacity-50 transition flex items-center gap-2"
+                  >
+                    {saving ? <Loader2 className="animate-spin" /> : 'Хадгалах'}
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-        </Dialog>
-      </Transition>
+        </div>
+      )}
     </div>
   );
 }

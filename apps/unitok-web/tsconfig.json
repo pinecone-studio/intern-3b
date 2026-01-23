@@ -16,6 +16,7 @@
         "name": "next"
       }
     ],
+    "baseUrl": ".",
     "paths": {
       "@/*": ["./*"]
     },
@@ -36,7 +37,11 @@
     "app/**/*.jsx",
     "../../apps/unitok-web/.next/types/**/*.ts",
     "../../dist/apps/unitok-web/.next/types/**/*.ts",
-    "next-env.d.ts"
+    "next-env.d.ts",
+    "features/add-exam-form",
+    "features/course-detail",
+    "features/exam-info",
+    "features/search"
   ],
   "exclude": [
     "out-tsc",

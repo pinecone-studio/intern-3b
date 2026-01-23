@@ -2,11 +2,7 @@
   "extends": "../../tsconfig.base.json",
   "include": ["**/*.ts", "**/*.tsx", "nativewind-env.d.ts", "babel.config.js"],
   "references": [
-    {
-      "path": "./tsconfig.app.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+    { "path": "./tsconfig.app.json" },
+    { "path": "./tsconfig.spec.json" }
   ]
 }
