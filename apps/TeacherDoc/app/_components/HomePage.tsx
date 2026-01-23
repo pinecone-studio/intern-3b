@@ -14,6 +14,7 @@ import {
 } from 'lucide-react';
 import { Badge, Card, CardContent } from './ui/buttton';
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 
 interface SubModule {
   id: string;
@@ -27,6 +28,7 @@ interface Module {
 }
 
 export default function HomePage() {
+ const router = useRouter();
   const [subject, setSubject] = useState('');
   const [grade, setGrade] = useState('');
   const [term, setTerm] = useState('');
@@ -34,10 +36,23 @@ export default function HomePage() {
   const [modules, setModules] = useState<Module[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  // UI States
-  const [isSubjectOpen, setIsSubjectOpen] = useState(false);
-  const [isGradeOpen, setIsGradeOpen] = useState(false);
-  const [isTermOpen, setIsTermOpen] = useState(false);
+
+    useEffect(() => {
+    const auth = localStorage.getItem('auth');
+
+    if (!auth) {
+      router.replace('/login'); // login page route
+      return;
+    }
+
+    const parsed = JSON.parse(auth);
+
+    if (!parsed.isLoggedIn) {
+      router.replace('/login');
+    }
+  }, []);
+
+  const isProgressComplete = subject && grade && term;
 
   const subjectRef = useRef<HTMLDivElement>(null);
   const gradeRef = useRef<HTMLDivElement>(null);

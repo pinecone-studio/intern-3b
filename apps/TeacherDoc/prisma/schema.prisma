@@ -34,13 +34,13 @@ model Document {
 }
 
 model User {
-  id       String  @id @default(cuid())
-  name     String
-  role     String
-  lessonId String?
-  password String
-  schoolId String?
-  number   Int     @unique
+  id        String  @id @default(cuid())
+  name      String
+  role      String 
+  lessonId  String?
+  password  String
+  schoolId  String?
+  number    Int    @unique
 }
 
 model Lesson {
