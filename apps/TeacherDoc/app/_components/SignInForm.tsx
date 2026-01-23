@@ -70,7 +70,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { School, Phone, Lock, Eye, BookOpen } from 'lucide-react'; // Икон ашиглахын тулд lucide-react суулгаарай
+import { School, Phone, Lock, Eye, BookOpen } from 'lucide-react';
 import FormInput from './FormInput';
 import FormButton from './FormButton';
 

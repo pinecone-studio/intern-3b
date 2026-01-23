@@ -19,6 +19,7 @@ import {
 
 import AddModuleForm from '../_components/AddModule';
 import AddSubModuleForm from '../_components/AddSubModule';
+import { useRouter } from 'next/navigation';
 
 interface SubModule {
   id: string;
@@ -65,6 +66,15 @@ export default function ManagerPage() {
   const [search, setSearch] = useState('');
   const [showAddModule, setShowAddModule] = useState(false);
 
+
+    const router = useRouter();
+
+  useEffect(() => {
+    const auth = localStorage.getItem('auth');
+    if (!auth || JSON.parse(auth).role !== 'manager') {
+      router.push('/');
+    }
+  }, []);
   const fetchModules = async () => {
     setLoading(true);
     try {
