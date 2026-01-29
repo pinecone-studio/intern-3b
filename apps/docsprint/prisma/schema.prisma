@@ -1,0 +1,123 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  HR
+  ADMIN
+  MANAGER
+}
+
+enum EmployeeStatus {
+  ACTIVE
+  INACTIVE
+}
+
+enum DocType {
+  EMPLOYMENT_CONTRACT
+  NDA
+  HIRING_ORDER
+  JOB_DESCRIPTION
+}
+
+enum AuditAction {
+  EMPLOYEE_CREATED
+  EMPLOYEE_UPDATED
+  EMPLOYEE_DEACTIVATED
+  DOC_GENERATED
+  DOC_DOWNLOADED
+}
+
+model Department {
+  id        String    @id @default(uuid())
+  name      String    @unique
+  users     User[]
+  employees Employee[]
+  createdAt DateTime  @default(now())
+}
+
+model User {
+  id           String      @id @default(uuid())
+  email        String      @unique
+  passwordHash String
+  role         UserRole
+  departmentId String?
+  department   Department? @relation(fields: [departmentId], references: [id])
+  isActive     Boolean     @default(true)
+  createdAt    DateTime    @default(now())
+
+  createdEmployees   Employee[]          @relation("EmployeeCreatedBy")
+  generatedDocuments GeneratedDocument[] @relation("DocumentGeneratedBy")
+  auditLogs          AuditLog[]
+}
+
+model Employee {
+  id              String         @id @default(uuid())
+  departmentId    String
+  department      Department     @relation(fields: [departmentId], references: [id])
+
+  firstName       String
+  lastName        String
+  email           String         @unique
+  regNo           String         @unique
+  position        String
+  startDate       DateTime
+  contractType    String
+  contractEndDate DateTime?
+  salary          Float?
+  status          EmployeeStatus @default(ACTIVE)
+
+  createdById     String
+  createdBy       User           @relation("EmployeeCreatedBy", fields: [createdById], references: [id])
+
+  documents       GeneratedDocument[]
+
+  createdAt       DateTime       @default(now())
+  updatedAt       DateTime       @updatedAt
+
+  @@index([departmentId])
+}
+
+model GeneratedDocument {
+  id            String   @id @default(uuid())
+  employeeId    String
+  employee      Employee @relation(fields: [employeeId], references: [id])
+
+  docType       DocType
+  filePath      String
+
+  generatedById String
+  generatedBy   User     @relation("DocumentGeneratedBy", fields: [generatedById], references: [id])
+
+  generatedAt   DateTime @default(now())
+
+  @@index([employeeId])
+}
+
+model AuditLog {
+  id         String      @id @default(uuid())
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+
+  action     AuditAction
+  entityType String
+  entityId   String
+  metadata   Json?
+
+  createdAt  DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
+}
+
