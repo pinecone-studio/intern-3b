@@ -6,9 +6,9 @@ export default defineConfig({
     ...nxE2EPreset(__filename, {
       cypressDir: 'src',
       webServerCommands: {
-        default: 'yarn nx run @intern-3b/docsprint:dev',
+        default: 'yarn nx run docsprint:dev',
       },
-      ciWebServerCommand: 'yarn nx run @intern-3b/docsprint:start',
+      ciWebServerCommand: 'yarn nx run docsprint:start',
       ciBaseUrl: 'http://localhost:3000',
     }),
     baseUrl: 'http://127.0.0.1:3000',
