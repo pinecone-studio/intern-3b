@@ -1,0 +1,9 @@
+{
+  "name": "doozy",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "/apps/doozy",
+  "projectType": "application",
+  "tags": [],
+  "// targets": "to see all targets run: nx show project doozy --web",
+  "targets": {}
+}

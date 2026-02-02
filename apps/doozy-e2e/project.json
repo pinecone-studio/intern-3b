@@ -1,0 +1,10 @@
+{
+  "name": "doozy-e2e",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "projectType": "application",
+  "sourceRoot": "/apps/doozy-e2e/src",
+  "tags": [],
+  "implicitDependencies": ["doozy"],
+  "// targets": "to see all targets run: nx show project doozy-e2e --web",
+  "targets": {}
+}
