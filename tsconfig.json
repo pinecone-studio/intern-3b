@@ -37,7 +37,9 @@
       "path": "./apps/doozy-e2e"
     },
     {
-      "path": ".//apps/doozy"
+      "path": "./apps/doozy"
+    },
+    {
       "path": "./apps/docsprint-e2e"
     },
     {
