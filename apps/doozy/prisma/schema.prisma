@@ -1,0 +1,106 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum JobStatus {
+  OPEN
+  INTERVIEWING
+  CONFIRMED
+  REJECTED
+}
+
+enum Days  {
+  MONDAY
+  TUESDAY
+  WEDNESDAY
+  THURSDAY
+  FRIDAY
+  SATURDAY
+  SUNDAY
+} 
+
+
+enum SenderType {
+  EMPLOYEE
+  EMPLOYER
+}
+
+model Employee {
+  id  String   @id @default(uuid())
+  name   String
+  phoneNumber  Int
+  applications  Application[]
+  savedJobs Job[] @relation("SavedJobs")
+  chats Chat[]
+  employer   Employer @relation(fields: [employerId], references: [id])
+  employerId String
+}
+
+
+model Employer {
+  id  String   @id @default(uuid())
+  name   String
+  phoneNumber  Int
+  employees Employee[]
+  jobs Job[]
+  chats Chat[]
+  
+}
+
+
+model Job {
+  id String   @id @default(uuid())
+  name String
+  category JobCategory[] @relation("JobCategories")
+  savedBy      Employee[] @relation("SavedJobs")
+  salary Int
+  address String
+  status JobStatus @default(OPEN)
+  latitude Float
+  longitude Float
+  description String
+  workDays Days[]
+  startHour Int
+  endHour Int
+  employer   Employer @relation(fields: [employerId], references: [id])
+  employerId String
+}
+ 
+
+ model Application {
+  id  String   @id @default(uuid())
+  name String
+  phoneNumber Int
+  description String
+  employee     Employee @relation(fields: [employeeId], references: [id])
+  employeeId   String
+ }
+
+
+ model Chat {
+  id  String   @id @default(uuid())
+  employeeId String
+  employerId String
+  createdAt DateTime @default(now())
+  message String
+  sender SenderType
+  employee   Employee @relation(fields: [employeeId], references: [id])
+  employer  Employer @relation(fields: [employerId], references: [id])
+ }
+
+ model JobCategory {
+  id String   @id @default(uuid())
+  name String 
+  jobs Job[]  @relation("JobCategories")
+ }
