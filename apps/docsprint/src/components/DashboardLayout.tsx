@@ -8,6 +8,7 @@ type PageType = 'employees' | 'history';
 
 export default function DashboardLayout() {
   const [page, setPage] = useState<PageType>('employees');
+  const [onePage, useOnePage] = useState('');
 
   return (
     <div className="flex h-screen bg-[#F8FAFC]">
