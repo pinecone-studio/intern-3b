@@ -3,8 +3,9 @@
 import { useState } from 'react';
 import Employees from './Employees';
 import History from './History';
+import ContractTemplate from './ContractTemplate';
 
-type PageType = 'employees' | 'history';
+type PageType = 'employees' | 'history' | 'ContractTemplate';
 
 export default function DashboardLayout() {
   const [page, setPage] = useState<PageType>('employees');
@@ -46,6 +47,16 @@ export default function DashboardLayout() {
           >
             Түүх
           </button>
+          <button
+            onClick={() => setPage('ContractTemplate')}
+            className={`flex items-center gap-3 w-full px-4 py-2.5 rounded-xl text-sm font-medium transition-all duration-200 ${
+              page === 'ContractTemplate'
+                ? 'bg-slate-900 text-white shadow-md shadow-slate-200'
+                : 'text-slate-500 hover:bg-slate-50 hover:text-slate-900'
+            }`}
+          >
+            Гэрээний загвар
+          </button>
         </nav>
 
         <div className="p-4 border-t border-slate-100">
@@ -69,6 +80,7 @@ export default function DashboardLayout() {
         <div className="max-w-7xl mx-auto mt-10">
           {page === 'employees' && <Employees />}
           {page === 'history' && <History />}
+          {page === 'ContractTemplate' && <ContractTemplate />}
         </div>
       </main>
     </div>
