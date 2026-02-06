@@ -198,8 +198,6 @@ import {
   Plus,
   Save,
   Printer,
-  ChevronRight,
-  Info,
   Type,
 } from 'lucide-react';
 

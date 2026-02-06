@@ -217,7 +217,6 @@ import {
   ChevronDown,
   History as HistoryIcon,
   Calendar,
-  User as UserIcon,
 } from 'lucide-react';
 import {
   Menubar,

@@ -93,7 +93,6 @@ import {
   Users,
   History as HistoryIcon,
   FileText,
-  LayoutDashboard,
   LogOut,
   ChevronRight,
 } from 'lucide-react';

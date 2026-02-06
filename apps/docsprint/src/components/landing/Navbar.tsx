@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Button } from '../ui/button';
-import { Shield, Menu, X, FileText } from 'lucide-react';
+import { Menu, X, FileText } from 'lucide-react';
 import { useState } from 'react';
 
 const links = [
