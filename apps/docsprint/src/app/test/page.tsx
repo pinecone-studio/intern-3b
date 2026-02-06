@@ -1,9 +1,9 @@
-import { AddEmployeeDialog } from '../../components/AddEmployes';
+import { AddEmployee } from '../../components/test';
 
 export default function Page() {
   return (
     <div>
-      <AddEmployeeDialog />
+      <AddEmployee />
     </div>
   );
 }
