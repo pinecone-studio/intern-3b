@@ -31,9 +31,6 @@
       "path": "./apps/unitok-web"
     },
     {
-      "path": "./libs/shadcn"
-    },
-    {
       "path": "./apps/doozy-e2e"
     },
     {
@@ -46,10 +43,7 @@
       "path": "./apps/docsprint"
     },
     {
-      "path": "./apps/docsprint-2-e2e"
-    },
-    {
-      "path": "./apps/docsprint-2"
+      "path": "./libs/graphql-schema"
     }
   ]
 }

@@ -30,7 +30,8 @@
           "buildDepsName": "build-deps",
           "watchDepsName": "watch-deps"
         }
-      }
+      },
+      "exclude": ["apps/doozy/libs/graphql-schema/*", "libs/graphql-schema/*"]
     },
     {
       "plugin": "@nx/next/plugin",
@@ -78,6 +79,15 @@
         "runAndroidTargetName": "run-android",
         "buildDepsTargetName": "build-deps",
         "watchDepsTargetName": "watch-deps"
+      }
+    },
+    {
+      "plugin": "@nx/js/typescript",
+      "include": ["apps/doozy/libs/graphql-schema/*", "libs/graphql-schema/*"],
+      "options": {
+        "typecheck": {
+          "targetName": "typecheck"
+        }
       }
     }
   ],
