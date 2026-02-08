@@ -1,4 +1,5 @@
 import './global.css';
+import { ClerkProvider } from '@clerk/nextjs';
 
 export const metadata = {
   title: 'Welcome to doozy',
@@ -11,8 +12,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
-      <body>{children}</body>
-    </html>
+    <ClerkProvider>
+      <html lang="en">
+        <body>{children}</body>
+      </html>
+    </ClerkProvider>
   );
 }
