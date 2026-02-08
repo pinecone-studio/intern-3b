@@ -34,22 +34,16 @@
       "path": "./libs/shadcn"
     },
     {
-      "path": "./apps/doozy-e2e"
-    },
-    {
       "path": "./apps/doozy"
     },
     {
-      "path": "./apps/docsprint-e2e"
+      "path": "./apps/doozy-e2e"
     },
     {
       "path": "./apps/docsprint"
     },
     {
-      "path": "./apps/docsprint-2-e2e"
-    },
-    {
-      "path": "./apps/docsprint-2"
+      "path": "./apps/docsprint-e2e"
     }
   ]
 }
