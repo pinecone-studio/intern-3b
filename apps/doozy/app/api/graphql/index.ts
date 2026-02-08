@@ -1,14 +1,8 @@
 import { ApolloServer } from '@apollo/server';
+import { typeDefs } from './schema';
+import { resolvers } from './resolvers';
 
 export const server = new ApolloServer({
-  typeDefs: `
-    type Query {
-      health: String
-    }
-  `,
-  resolvers: {
-    Query: {
-      health: () => 'ok',
-    },
-  },
+  typeDefs,
+  resolvers,
 });
