@@ -5,6 +5,7 @@
   "dependencies": {
     "@apollo/server": "^5.4.0",
     "@as-integrations/next": "^4.1.0",
+    "@clerk/nextjs": "^6.37.3",
     "@prisma/client": "^7.3.0",
     "apollo-server": "^3.13.0",
     "graphql": "^16.12.0",
