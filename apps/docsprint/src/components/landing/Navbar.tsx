@@ -4,6 +4,17 @@ import Link from 'next/link';
 import { Button } from '../ui/button';
 import { Menu, X, FileText } from 'lucide-react';
 import { useState } from 'react';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '../ui/dialog';
+import { Label } from '../ui/label';
+import { Input } from '../ui/input';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 
 const links = [
   { href: '#features', label: 'Боломжууд' },
@@ -40,19 +51,149 @@ export function Navbar() {
           </nav>
 
           <div className="hidden md:flex items-center gap-3">
-            <Link href="/login">
-              <Button
-                variant="ghost"
-                className="text-slate-600 hover:text-slate-900 hover:bg-slate-50 font-medium"
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="w-full rounded-xl bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/30 hover:scale-[1.02] transition">
+                  Нэвтрэх / Бүртгүүлэх
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent
+                className="
+      sm:max-w-[420px]
+      rounded-3xl
+      border border-white/10
+      bg-[#0B0B14]/90
+      backdrop-blur-2xl
+      shadow-2xl shadow-indigo-500/20
+    "
               >
-                Нэвтрэх
-              </Button>
-            </Link>
-            <Link href="/login?tab=register">
-              <Button className="bg-slate-900 hover:bg-slate-800 text-white px-5 rounded-xl font-medium transition-all shadow-md shadow-slate-200">
-                Бүртгүүлэх
-              </Button>
-            </Link>
+                <DialogHeader className="text-center">
+                  <DialogTitle className="text-2xl font-extrabold tracking-tight text-white">
+                    Welcome back ✨
+                  </DialogTitle>
+                  <p className="text-sm text-white/60">
+                    Access your account or create a new one
+                  </p>
+                </DialogHeader>
+
+                <Tabs defaultValue="login" className="w-full mt-6">
+                  <TabsList
+                    className="
+          grid grid-cols-2 rounded-xl
+          bg-white/5
+          p-1
+        "
+                  >
+                    <TabsTrigger
+                      value="login"
+                      className="
+            rounded-lg
+            data-[state=active]:bg-gradient-to-r
+            data-[state=active]:from-indigo-500
+            data-[state=active]:to-purple-600
+            data-[state=active]:text-white
+            text-white/60
+          "
+                    >
+                      Нэвтрэх
+                    </TabsTrigger>
+
+                    <TabsTrigger
+                      value="register"
+                      className="
+            rounded-lg
+            data-[state=active]:bg-gradient-to-r
+            data-[state=active]:from-indigo-500
+            data-[state=active]:to-purple-600
+            data-[state=active]:text-white
+            text-white/60
+          "
+                    >
+                      Бүртгүүлэх
+                    </TabsTrigger>
+                  </TabsList>
+
+                  {/* LOGIN */}
+                  <TabsContent value="login" className="space-y-4 mt-6">
+                    <div className="space-y-1">
+                      <Label className="text-white/70">Email</Label>
+                      <Input
+                        className="
+              bg-white/5 border-white/10 text-white
+              focus:border-indigo-500 focus:ring-indigo-500/20
+              rounded-xl
+            "
+                        placeholder="you@example.com"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-white/70">Нууц үг</Label>
+                      <Input
+                        type="password"
+                        className="
+              bg-white/5 border-white/10 text-white
+              focus:border-indigo-500 focus:ring-indigo-500/20
+              rounded-xl
+            "
+                        placeholder="••••••••"
+                      />
+                    </div>
+
+                    <Button
+                      className="
+            w-full rounded-xl
+            bg-gradient-to-r from-indigo-500 to-purple-600
+            text-white
+            shadow-lg shadow-indigo-500/30
+            hover:scale-[1.02]
+            transition
+          "
+                    >
+                      Нэвтрэх
+                    </Button>
+                  </TabsContent>
+
+                  {/* REGISTER */}
+                  <TabsContent value="register" className="space-y-4 mt-6">
+                    <div className="space-y-1">
+                      <Label className="text-white/70">Email</Label>
+                      <Input className="bg-white/5 border-white/10 text-white rounded-xl" />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-white/70">Нууц үг</Label>
+                      <Input
+                        type="password"
+                        className="bg-white/5 border-white/10 text-white rounded-xl"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <Label className="text-white/70">Нууц үг давтах</Label>
+                      <Input
+                        type="password"
+                        className="bg-white/5 border-white/10 text-white rounded-xl"
+                      />
+                    </div>
+
+                    <Button
+                      className="
+            w-full rounded-xl
+            bg-gradient-to-r from-indigo-500 to-purple-600
+            text-white
+            shadow-lg shadow-purple-500/30
+            hover:scale-[1.02]
+            transition
+          "
+                    >
+                      Бүртгүүлэх
+                    </Button>
+                  </TabsContent>
+                </Tabs>
+              </DialogContent>
+            </Dialog>
           </div>
 
           <button
@@ -78,19 +219,67 @@ export function Navbar() {
             </a>
           ))}
           <div className="pt-4 border-t border-slate-100 flex flex-col gap-2">
-            <Link href="/login" className="w-full">
-              <Button
-                variant="outline"
-                className="w-full border-slate-200 rounded-xl"
-              >
-                Нэвтрэх
-              </Button>
-            </Link>
-            <Link href="/login?tab=register" className="w-full">
-              <Button className="w-full bg-indigo-600 text-white rounded-xl">
-                Бүртгүүлэх
-              </Button>
-            </Link>
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button className="w-full rounded-xl bg-indigo-600 text-white hover:bg-indigo-700">
+                  Нэвтрэх / Бүртгүүлэх
+                </Button>
+              </DialogTrigger>
+
+              <DialogContent className="sm:max-w-[420px] rounded-2xl backdrop-blur-xl">
+                <DialogHeader className="text-center">
+                  <DialogTitle className="text-2xl font-bold">
+                    Тавтай морил 👋
+                  </DialogTitle>
+                </DialogHeader>
+
+                <Tabs defaultValue="login" className="w-full mt-4">
+                  <TabsList className="grid grid-cols-2 rounded-xl">
+                    <TabsTrigger value="login">Нэвтрэх</TabsTrigger>
+                    <TabsTrigger value="register">Бүртгүүлэх</TabsTrigger>
+                  </TabsList>
+
+                  {/* LOGIN */}
+                  <TabsContent value="login" className="space-y-4 mt-6">
+                    <div className="space-y-2">
+                      <Label>Email</Label>
+                      <Input placeholder="you@example.com" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Нууц үг</Label>
+                      <Input type="password" placeholder="••••••••" />
+                    </div>
+
+                    <Button className="w-full rounded-xl bg-indigo-600 text-white">
+                      Нэвтрэх
+                    </Button>
+                  </TabsContent>
+
+                  {/* REGISTER */}
+                  <TabsContent value="register" className="space-y-4 mt-6">
+                    <div className="space-y-2">
+                      <Label>Email</Label>
+                      <Input placeholder="you@example.com" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Нууц үг</Label>
+                      <Input type="password" placeholder="••••••••" />
+                    </div>
+
+                    <div className="space-y-2">
+                      <Label>Нууц үг давтах</Label>
+                      <Input type="password" placeholder="••••••••" />
+                    </div>
+
+                    <Button className="w-full rounded-xl bg-indigo-600 text-white">
+                      Бүртгүүлэх
+                    </Button>
+                  </TabsContent>
+                </Tabs>
+              </DialogContent>
+            </Dialog>
           </div>
         </div>
       )}
