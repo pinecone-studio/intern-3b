@@ -24,13 +24,16 @@
     "rootDir": "."
   },
   "include": [
+    "**/*.ts",
+    "**/*.tsx",
     "app/**/*.ts",
     "app/**/*.tsx",
     "app/**/*.js",
     "app/**/*.jsx",
     "../../apps/doozy/.next/types/**/*.ts",
     "../../dist/apps/doozy/.next/types/**/*.ts",
-    "next-env.d.ts"
+    "next-env.d.ts",
+    "generated/prisma/**/*.ts"
   ],
   "exclude": [
     "out-tsc",

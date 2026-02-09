@@ -1,9 +1,13 @@
 import { auth } from '@clerk/nextjs/server';
+import { prisma } from '../db/prisma';
 
-export const createContext = async () => {
+export async function createContext() {
   const { userId } = await auth();
 
-  return { userId };
-};
+  return {
+    userId,
+    prisma,
+  };
+}
 
 export type GraphQLContext = Awaited<ReturnType<typeof createContext>>;
