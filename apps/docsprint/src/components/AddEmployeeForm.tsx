@@ -11,7 +11,6 @@ import {
   Calendar,
   Phone,
   Mail,
-  MapPin,
   FileText,
   Download,
   Printer,
@@ -19,7 +18,7 @@ import {
   Sparkles,
   ChevronRight,
   ChevronLeft,
-  Clock, // Нэмэлтээр цагны icon авлаа
+  Clock,
 } from 'lucide-react';
 
 import { Button } from '../components/ui/button';
@@ -30,7 +29,15 @@ import { DialogHeader, DialogTitle } from '../components/ui/dialog';
 type Step = 'personal' | 'job' | 'bank' | 'contract';
 type ContractType = 'employment' | 'nda' | 'liability' | 'probation';
 
+interface AddEmployeeFormProps {
+  onClose: () => void;
+  onAdd: (employee: any) => void;
+  isEdit?: boolean;
+  initialData?: any;
+}
+
 type FormState = {
+  id?: number;
   lastName: string;
   firstName: string;
   regNo: string;
@@ -40,7 +47,6 @@ type FormState = {
   position: string;
   department: string;
   startDate: string;
-  // Шинэ талбарууд:
   isProbation: boolean;
   probationMonths: string;
   bankName: string;
@@ -59,22 +65,39 @@ const initialForm: FormState = {
   position: '',
   department: '',
   startDate: '',
-  isProbation: false, // Default утга
-  probationMonths: '3', // Default 3 сар
+  isProbation: false,
+  probationMonths: '3',
   bankName: '',
   accountNo: '',
   accountHolder: '',
   contractType: undefined,
 };
 
-interface AddEmployeeFormProps {
-  onClose: () => void;
-}
-
-export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
+export function AddEmployeeForm({
+  onClose,
+  onAdd,
+  isEdit,
+  initialData,
+}: AddEmployeeFormProps) {
   const [step, setStep] = React.useState<Step>('personal');
   const [direction, setDirection] = React.useState(1);
-  const [form, setForm] = React.useState<FormState>(initialForm);
+
+  const [form, setForm] = React.useState<FormState>(() => {
+    if (isEdit && initialData) {
+      const names = initialData.name ? initialData.name.split(' ') : ['', ''];
+      return {
+        ...initialForm,
+        id: initialData.id,
+        lastName: names[0] || '',
+        firstName: names.slice(1).join(' ') || '',
+        email: initialData.email || '',
+        position: initialData.role || '',
+        department: initialData.department || '',
+        isProbation: initialData.status === 'trial',
+      };
+    }
+    return initialForm;
+  });
 
   const steps: Step[] = ['personal', 'job', 'bank', 'contract'];
   const stepIndex = steps.indexOf(step);
@@ -105,28 +128,11 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
     };
 
   const canGoNext = React.useMemo(() => {
-    if (step === 'personal') {
-      return (
-        form.lastName.trim() &&
-        form.firstName.trim() &&
-        form.regNo.trim() &&
-        form.phone.trim()
-      );
-    }
-    if (step === 'job') {
-      const basicJob = form.position.trim() && form.startDate.trim();
-      // Хэрэв туршилтын хугацаатай бол сараа заавал бөглөсөн байх
-      if (form.isProbation) {
-        return basicJob && form.probationMonths.trim();
-      }
-      return basicJob;
-    }
-    if (step === 'bank') {
-      return form.bankName.trim() && form.accountNo.trim();
-    }
-    if (step === 'contract') {
-      return !!form.contractType;
-    }
+    if (step === 'personal')
+      return form.lastName.trim() && form.firstName.trim() && form.regNo.trim();
+    if (step === 'job') return form.position.trim() && form.startDate.trim();
+    if (step === 'bank') return form.bankName.trim() && form.accountNo.trim();
+    if (step === 'contract') return !!form.contractType;
     return false;
   }, [step, form]);
 
@@ -141,17 +147,21 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
     setStep(steps[Math.max(stepIndex - 1, 0)]);
   };
 
-  const resetAll = () => {
-    setStep('personal');
-    setDirection(1);
-    setForm(initialForm);
-  };
-
   const onSubmit = () => {
     if (!canGoNext) return;
-    console.log('SUBMIT:', form);
+
+    const updatedEmployee = {
+      id: form.id,
+      name: `${form.lastName} ${form.firstName}`,
+      email: form.email,
+      role: form.position,
+      department: form.department,
+      salary: isEdit ? initialData.salary : 'Тохиролцоно',
+      status: form.isProbation ? 'trial' : 'active',
+    };
+
+    onAdd(updatedEmployee);
     onClose();
-    resetAll();
   };
 
   const variants = {
@@ -161,70 +171,62 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
   };
 
   return (
-    <div className="flex h-full min-h-[780px]">
-      {/* Sidebar - Same */}
+    <div className="flex h-full min-h-[700px]">
       <div className="w-64 bg-gradient-to-b from-blue-50/50 to-white border-r border-blue-50 p-8 hidden md:flex flex-col">
         <div className="mb-12">
           <div className="h-12 w-12 rounded-2xl bg-white flex items-center justify-center mb-4 shadow-sm border border-blue-100">
             <User className="h-6 w-6 text-blue-600" />
           </div>
           <h2 className="font-extrabold text-slate-800 text-xl tracking-tight">
-            Бүртгэл
+            {isEdit ? 'Засварлах' : 'Бүртгэл'}
           </h2>
           <p className="text-blue-400 text-[11px] font-bold uppercase tracking-wider">
-            Шинэ ажилтан үүсгэх
+            {isEdit ? 'Мэдээлэл шинэчлэх' : 'Шинэ ажилтан үүсгэх'}
           </p>
         </div>
 
         <div className="space-y-7 relative flex-1">
-          {steps.map((s, i) => {
-            const isActive = i === stepIndex;
-            const isCompleted = i < stepIndex;
-            return (
-              <div key={s} className="flex items-center gap-4 relative z-10">
-                <div
-                  className={`h-9 w-9 rounded-xl flex items-center justify-center transition-all duration-300 border-2 ${
-                    isActive
-                      ? 'bg-blue-600 border-blue-600 shadow-lg shadow-blue-100 scale-110'
-                      : isCompleted
-                        ? 'bg-blue-100 border-blue-100 text-blue-600'
-                        : 'bg-white border-slate-100'
-                  }`}
-                >
-                  {isCompleted ? (
-                    <Check className="h-4 w-4" strokeWidth={3} />
-                  ) : (
-                    <span
-                      className={`text-xs font-bold ${isActive ? 'text-white' : 'text-slate-300'}`}
-                    >
-                      0{i + 1}
-                    </span>
-                  )}
-                </div>
-                <span
-                  className={`text-sm font-bold tracking-tight transition-colors ${isActive ? 'text-blue-700' : 'text-slate-400'}`}
-                >
-                  {s === 'personal'
-                    ? 'Хувийн'
-                    : s === 'job'
-                      ? 'Ажлын'
-                      : s === 'bank'
-                        ? 'Санхүү'
-                        : 'Гэрээ'}
-                </span>
+          {steps.map((s, i) => (
+            <div key={s} className="flex items-center gap-4 relative z-10">
+              <div
+                className={`h-9 w-9 rounded-xl flex items-center justify-center transition-all duration-300 border-2 ${
+                  i === stepIndex
+                    ? 'bg-blue-600 border-blue-600 shadow-blue-100 text-white'
+                    : i < stepIndex
+                      ? 'bg-blue-100 border-blue-100 text-blue-600'
+                      : 'bg-white border-slate-100 text-slate-300'
+                }`}
+              >
+                {i < stepIndex ? (
+                  <Check className="h-4 w-4" strokeWidth={3} />
+                ) : (
+                  <span className="text-xs font-bold">0{i + 1}</span>
+                )}
               </div>
-            );
-          })}
+              <span
+                className={`text-sm font-bold transition-colors ${i === stepIndex ? 'text-blue-700' : 'text-slate-400'}`}
+              >
+                {s === 'personal'
+                  ? 'Хувийн'
+                  : s === 'job'
+                    ? 'Ажлын'
+                    : s === 'bank'
+                      ? 'Санхүү'
+                      : 'Гэрээ'}
+              </span>
+            </div>
+          ))}
         </div>
-
-        <Button
-          variant="ghost"
-          onClick={fillDemoData}
-          className="mt-auto bg-blue-50/50 text-blue-600 hover:bg-blue-100 hover:text-blue-700 rounded-2xl py-6 flex items-center gap-2 border border-blue-100 transition-all"
-        >
-          <Sparkles className="h-4 w-4" />
-          <span className="text-xs font-bold">Demo Data</span>
-        </Button>
+        {!isEdit && (
+          <Button
+            variant="ghost"
+            onClick={fillDemoData}
+            className="mt-auto bg-blue-50/50 text-blue-600 hover:bg-blue-100 rounded-2xl py-6 flex items-center gap-2 border border-blue-100 transition-all"
+          >
+            <Sparkles className="h-4 w-4" />{' '}
+            <span className="text-xs font-bold">Demo Data</span>
+          </Button>
+        )}
       </div>
 
       <div className="flex-1 flex flex-col bg-white relative">
@@ -253,7 +255,6 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
               animate="center"
               exit="exit"
               transition={{ duration: 0.3, ease: 'easeInOut' }}
-              className="h-full"
             >
               {step === 'personal' && (
                 <div className="grid grid-cols-2 gap-8 pt-4">
@@ -265,7 +266,7 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
                       value={form.lastName}
                       onChange={setField('lastName')}
                       placeholder="Овог"
-                      className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all text-sm font-semibold"
+                      className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white text-sm font-semibold"
                     />
                   </div>
                   <div className="space-y-3">
@@ -276,7 +277,7 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
                       value={form.firstName}
                       onChange={setField('firstName')}
                       placeholder="Нэр"
-                      className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white focus:ring-4 focus:ring-blue-50 transition-all text-sm font-semibold"
+                      className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white text-sm font-semibold"
                     />
                   </div>
                   <div className="space-y-3 col-span-2">
@@ -287,7 +288,7 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
                       value={form.regNo}
                       onChange={setField('regNo')}
                       placeholder="AA00000000"
-                      className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:ring-4 focus:ring-blue-50 font-mono tracking-[0.2em] uppercase text-sm font-bold"
+                      className="h-14 rounded-2xl border-slate-100 bg-slate-50/50 font-mono tracking-widest uppercase text-sm font-bold"
                     />
                   </div>
                   <div className="space-y-3">
@@ -301,7 +302,7 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
                         value={form.email}
                         onChange={setField('email')}
                         placeholder="mail@company.mn"
-                        className="h-14 pl-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white text-sm font-semibold"
+                        className="h-14 pl-14 rounded-2xl border-slate-100 bg-slate-50/50"
                       />
                     </div>
                   </div>
@@ -315,7 +316,7 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
                         value={form.phone}
                         onChange={setField('phone')}
                         placeholder="99000000"
-                        className="h-14 pl-14 rounded-2xl border-slate-100 bg-slate-50/50 focus:bg-white text-sm font-bold font-mono"
+                        className="h-14 pl-14 rounded-2xl border-slate-100 bg-slate-50/50"
                       />
                     </div>
                   </div>
@@ -366,7 +367,6 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
                       />
                     </div>
                   </div>
-
                   <div className="space-y-3">
                     <Label className="text-slate-400 text-[10px] font-black uppercase tracking-widest ml-1">
                       Туршилтын хугацаа
@@ -379,46 +379,25 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
                             isProbation: !p.isProbation,
                           }))
                         }
-                        className={`flex-1 h-14 rounded-2xl border-2 flex items-center justify-center gap-3 transition-all ${
-                          form.isProbation
-                            ? 'border-blue-600 bg-blue-50 text-blue-700'
-                            : 'border-slate-100 bg-slate-50/50 text-slate-400'
-                        }`}
+                        className={`flex-1 h-14 rounded-2xl border-2 flex items-center justify-center gap-3 transition-all ${form.isProbation ? 'border-blue-600 bg-blue-50 text-blue-700' : 'border-slate-100 bg-slate-50/50 text-slate-400'}`}
                       >
                         <Clock className="h-5 w-5" />
                         <span className="text-sm font-bold">
                           {form.isProbation
                             ? 'Туршилтаар авна'
-                            : 'ндсэн ажилтан'}
+                            : 'Үндсэн ажилтан'}
                         </span>
                       </button>
-
                       {form.isProbation && (
                         <div className="w-24">
                           <Input
                             type="number"
                             value={form.probationMonths}
                             onChange={setField('probationMonths')}
-                            className="h-14 rounded-2xl border-blue-100 text-center font-bold"
-                            placeholder="Сар"
+                            className="h-14 rounded-2xl text-center font-bold"
                           />
                         </div>
                       )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3 col-span-2">
-                    <Label className="text-slate-400 text-[10px] font-black uppercase tracking-widest ml-1">
-                      Оршин суугаа хаяг
-                    </Label>
-                    <div className="relative">
-                      <MapPin className="absolute left-5 top-4.5 h-5 w-5 text-blue-300" />
-                      <Input
-                        value={form.address}
-                        onChange={setField('address')}
-                        placeholder="Дэлгэрэнгүй хаяг..."
-                        className="h-14 pl-14 rounded-2xl border-slate-100"
-                      />
                     </div>
                   </div>
                 </div>
@@ -732,32 +711,23 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
         <div className="p-10 bg-white border-t border-slate-50 flex items-center justify-between">
           <Button
             variant="ghost"
-            className="text-slate-400 font-bold hover:text-red-500 transition-colors px-6"
-            onClick={() => {
-              onClose();
-              resetAll();
-            }}
+            className="text-slate-400 font-bold hover:text-red-500"
+            onClick={onClose}
           >
             Болих
           </Button>
-
           <div className="flex gap-4">
             {stepIndex > 0 && (
               <Button
                 variant="outline"
-                className="border-slate-100 text-slate-500 font-bold rounded-2xl h-14 px-8 hover:bg-slate-50 transition-all"
+                className="border-slate-100 font-bold rounded-2xl h-14 px-8"
                 onClick={goBack}
               >
                 <ChevronLeft className="h-4 w-4 mr-2" /> Буцах
               </Button>
             )}
-
             <Button
-              className={`min-w-[200px] h-14 rounded-2xl font-black tracking-tight transition-all flex items-center justify-center gap-2 ${
-                canGoNext
-                  ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-xl shadow-blue-100 scale-100 hover:translate-y-[-2px] border-b-4 border-blue-800'
-                  : 'bg-slate-100 text-slate-300 cursor-not-allowed'
-              }`}
+              className="min-w-[200px] h-14 rounded-2xl font-black bg-blue-600 hover:bg-blue-700 text-white border-b-4 border-blue-800"
               onClick={stepIndex < steps.length - 1 ? goNext : onSubmit}
               disabled={!canGoNext}
             >
@@ -767,8 +737,8 @@ export function AddEmployeeForm({ onClose }: AddEmployeeFormProps) {
                 </>
               ) : (
                 <>
-                  Бүртгэлийг дуусгах{' '}
-                  <Check className="h-5 w-5" strokeWidth={3} />
+                  {isEdit ? 'Засварыг хадгалах' : 'Бүртгэлийг дуусгах'}{' '}
+                  <Check className="h-5 w-5" />
                 </>
               )}
             </Button>
