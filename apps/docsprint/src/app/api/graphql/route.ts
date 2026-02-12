@@ -18,6 +18,14 @@ const typeDefs = `#graphql
     INACTIVE
   }
 
+  enum ContractType {
+    FULL_TIME
+    PART_TIME
+    TEMPORARY
+    PROBATION
+    INTERN
+  }
+
   enum DocType {
     EMPLOYMENT_CONTRACT
     NDA
@@ -67,7 +75,7 @@ const typeDefs = `#graphql
     regNo: String!
     position: String!
     startDate: DateTime!
-    contractType: String!
+    contractType: ContractType!
     contractEndDate: DateTime
     salary: Float
     status: EmployeeStatus!
@@ -76,6 +84,22 @@ const typeDefs = `#graphql
     createdBy: User!
 
     documents: [GeneratedDocument!]!
+    bankAccounts: [EmployeeBankAccount!]!
+
+    createdAt: DateTime!
+    updatedAt: DateTime!
+  }
+
+  type EmployeeBankAccount {
+    id: ID!
+    employeeId: String!
+    employee: Employee!
+
+    bankName: String!
+    accountNo: String!
+    accountHolder: String!
+
+    isPrimary: Boolean!
 
     createdAt: DateTime!
     updatedAt: DateTime!
@@ -123,6 +147,9 @@ const typeDefs = `#graphql
       departmentId: String
       status: EmployeeStatus
     ): [Employee!]!
+
+    bankAccount(id: ID!): EmployeeBankAccount
+    bankAccounts(employeeId: String): [EmployeeBankAccount!]!
 
     generatedDocument(id: ID!): GeneratedDocument
     generatedDocuments(
@@ -173,7 +200,7 @@ const typeDefs = `#graphql
     regNo: String!
     position: String!
     startDate: DateTime!
-    contractType: String!
+    contractType: ContractType!
     contractEndDate: DateTime
     salary: Float
     createdById: String!
@@ -186,10 +213,25 @@ const typeDefs = `#graphql
     regNo: String
     position: String
     startDate: DateTime
-    contractType: String
+    contractType: ContractType
     contractEndDate: DateTime
     salary: Float
     status: EmployeeStatus
+  }
+
+  input CreateEmployeeBankAccountInput {
+    employeeId: String!
+    bankName: String!
+    accountNo: String!
+    accountHolder: String!
+    isPrimary: Boolean
+  }
+
+  input UpdateEmployeeBankAccountInput {
+    bankName: String
+    accountNo: String
+    accountHolder: String
+    isPrimary: Boolean
   }
 
   input CreateGeneratedDocumentInput {
@@ -225,6 +267,12 @@ const typeDefs = `#graphql
     updateEmployee(id: ID!, input: UpdateEmployeeInput!, auditUserId: String!): Employee!
     deactivateEmployee(id: ID!, auditUserId: String!): Employee!
 
+    # Bank accounts
+    createEmployeeBankAccount(input: CreateEmployeeBankAccountInput!): EmployeeBankAccount!
+    updateEmployeeBankAccount(id: ID!, input: UpdateEmployeeBankAccountInput!): EmployeeBankAccount!
+    deleteEmployeeBankAccount(id: ID!): Boolean!
+    setPrimaryBankAccount(employeeId: String!, bankAccountId: String!): EmployeeBankAccount!
+
     # Documents
     createGeneratedDocument(input: CreateGeneratedDocumentInput!): GeneratedDocument!
     logDocumentDownload(documentId: ID!, userId: String!, metadata: JSON): AuditLog!
@@ -251,7 +299,7 @@ const resolvers = {
       return new Date(value);
     },
     parseLiteral(ast: any) {
-      return new Date(ast.value);
+      return new Date((ast as any).value);
     },
   },
   JSON: {
@@ -305,6 +353,16 @@ const resolvers = {
         where: { employeeId: parent.id },
         orderBy: { generatedAt: 'desc' },
       }),
+    bankAccounts: (parent: any) =>
+      prisma.employeeBankAccount.findMany({
+        where: { employeeId: parent.id },
+        orderBy: [{ isPrimary: 'desc' }, { createdAt: 'desc' }],
+      }),
+  },
+
+  EmployeeBankAccount: {
+    employee: (parent: any) =>
+      prisma.employee.findUnique({ where: { id: parent.employeeId } }),
   },
 
   GeneratedDocument: {
@@ -352,6 +410,14 @@ const resolvers = {
         orderBy: { createdAt: 'desc' },
       }),
 
+    bankAccount: async (_: unknown, args: { id: string }) =>
+      prisma.employeeBankAccount.findUnique({ where: { id: args.id } }),
+    bankAccounts: async (_: unknown, args: { employeeId?: string }) =>
+      prisma.employeeBankAccount.findMany({
+        where: args.employeeId ? { employeeId: args.employeeId } : {},
+        orderBy: [{ isPrimary: 'desc' }, { createdAt: 'desc' }],
+      }),
+
     generatedDocument: async (_: unknown, args: { id: string }) =>
       prisma.generatedDocument.findUnique({ where: { id: args.id } }),
     generatedDocuments: async (
@@ -394,20 +460,20 @@ const resolvers = {
   },
 
   Mutation: {
-    createDepartment: async (_: unknown, args: { input: { name: string } }) => {
-      return prisma.department.create({ data: { name: args.input.name } });
-    },
+    createDepartment: async (_: unknown, args: { input: { name: string } }) =>
+      prisma.department.create({ data: { name: args.input.name } }),
+
     updateDepartment: async (
       _: unknown,
       args: { id: string; input: { name?: string } },
-    ) => {
-      return prisma.department.update({
+    ) =>
+      prisma.department.update({
         where: { id: args.id },
         data: {
           ...(args.input.name !== undefined ? { name: args.input.name } : {}),
         },
-      });
-    },
+      }),
+
     deleteDepartment: async (_: unknown, args: { id: string }) => {
       await prisma.department.delete({ where: { id: args.id } });
       return true;
@@ -425,6 +491,7 @@ const resolvers = {
         },
       });
     },
+
     updateUser: async (_: unknown, args: { id: string; input: any }) => {
       const i = args.input;
       return prisma.user.update({
@@ -442,18 +509,12 @@ const resolvers = {
         },
       });
     },
-    deactivateUser: async (_: unknown, args: { id: string }) => {
-      return prisma.user.update({
-        where: { id: args.id },
-        data: { isActive: false },
-      });
-    },
-    activateUser: async (_: unknown, args: { id: string }) => {
-      return prisma.user.update({
-        where: { id: args.id },
-        data: { isActive: true },
-      });
-    },
+
+    deactivateUser: async (_: unknown, args: { id: string }) =>
+      prisma.user.update({ where: { id: args.id }, data: { isActive: false } }),
+
+    activateUser: async (_: unknown, args: { id: string }) =>
+      prisma.user.update({ where: { id: args.id }, data: { isActive: true } }),
 
     createEmployee: async (_: unknown, args: { input: any }) => {
       const i = args.input;
@@ -544,8 +605,8 @@ const resolvers = {
     deactivateEmployee: async (
       _: unknown,
       args: { id: string; auditUserId: string },
-    ) => {
-      return prisma.$transaction(async (tx) => {
+    ) =>
+      prisma.$transaction(async (tx) => {
         const updated = await tx.employee.update({
           where: { id: args.id },
           data: { status: 'INACTIVE' },
@@ -562,8 +623,85 @@ const resolvers = {
         });
 
         return updated;
+      }),
+
+    createEmployeeBankAccount: async (_: unknown, args: { input: any }) => {
+      const i = args.input;
+      const makePrimary = i.isPrimary ?? true;
+
+      return prisma.$transaction(async (tx) => {
+        if (makePrimary) {
+          await tx.employeeBankAccount.updateMany({
+            where: { employeeId: i.employeeId },
+            data: { isPrimary: false },
+          });
+        }
+
+        return tx.employeeBankAccount.create({
+          data: {
+            employeeId: i.employeeId,
+            bankName: i.bankName,
+            accountNo: i.accountNo,
+            accountHolder: i.accountHolder,
+            isPrimary: makePrimary,
+          },
+        });
       });
     },
+
+    updateEmployeeBankAccount: async (
+      _: unknown,
+      args: { id: string; input: any },
+    ) => {
+      const i = args.input;
+
+      return prisma.$transaction(async (tx) => {
+        if (i.isPrimary === true) {
+          const current = await tx.employeeBankAccount.findUnique({
+            where: { id: args.id },
+          });
+          if (!current) throw new Error('EmployeeBankAccount not found');
+
+          await tx.employeeBankAccount.updateMany({
+            where: { employeeId: current.employeeId, NOT: { id: args.id } },
+            data: { isPrimary: false },
+          });
+        }
+
+        return tx.employeeBankAccount.update({
+          where: { id: args.id },
+          data: {
+            ...(i.bankName !== undefined ? { bankName: i.bankName } : {}),
+            ...(i.accountNo !== undefined ? { accountNo: i.accountNo } : {}),
+            ...(i.accountHolder !== undefined
+              ? { accountHolder: i.accountHolder }
+              : {}),
+            ...(i.isPrimary !== undefined ? { isPrimary: i.isPrimary } : {}),
+          },
+        });
+      });
+    },
+
+    deleteEmployeeBankAccount: async (_: unknown, args: { id: string }) => {
+      await prisma.employeeBankAccount.delete({ where: { id: args.id } });
+      return true;
+    },
+
+    setPrimaryBankAccount: async (
+      _: unknown,
+      args: { employeeId: string; bankAccountId: string },
+    ) =>
+      prisma.$transaction(async (tx) => {
+        await tx.employeeBankAccount.updateMany({
+          where: { employeeId: args.employeeId },
+          data: { isPrimary: false },
+        });
+
+        return tx.employeeBankAccount.update({
+          where: { id: args.bankAccountId },
+          data: { isPrimary: true },
+        });
+      }),
 
     createGeneratedDocument: async (_: unknown, args: { input: any }) => {
       const i = args.input;
