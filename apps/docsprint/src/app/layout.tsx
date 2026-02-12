@@ -1,4 +1,5 @@
 import './global.css';
+import ApolloWrapper from './lib/ApolloWrapper';
 
 export const metadata = {
   title: 'Welcome to docsprint',
@@ -12,7 +13,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body>{children}</body>
+      <body>
+        <ApolloWrapper>{children}</ApolloWrapper>
+      </body>
     </html>
   );
 }
