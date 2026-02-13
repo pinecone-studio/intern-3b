@@ -7,7 +7,7 @@ import {
 
 import { cn } from '@intern-3b/shadcn';
 
-import { Button, buttonVariants } from '@/components/ui/button';
+import { Button, buttonVariants } from './button';
 
 function Pagination({ className, ...props }: React.ComponentProps<'nav'>) {
   return (

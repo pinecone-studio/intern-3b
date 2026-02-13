@@ -132,6 +132,14 @@ const typeDefs = `#graphql
     createdAt: DateTime!
   }
 
+  # ---------- Pagination Types ----------
+  type EmployeesPage {
+    items: [Employee!]!
+    total: Int!
+    page: Int!
+    pageSize: Int!
+  }
+
   # ---------- Queries ----------
   type Query {
     hello: String!
@@ -143,10 +151,15 @@ const typeDefs = `#graphql
     users(includeInactive: Boolean = false): [User!]!
 
     employee(id: ID!): Employee
+
+    # Paginated employees (this replaces your old list query)
     employees(
       departmentId: String
       status: EmployeeStatus
-    ): [Employee!]!
+      page: Int = 1
+      pageSize: Int = 10
+      search: String
+    ): EmployeesPage!
 
     bankAccount(id: ID!): EmployeeBankAccount
     bankAccounts(employeeId: String): [EmployeeBankAccount!]!
@@ -398,17 +411,49 @@ const resolvers = {
 
     employee: async (_: unknown, args: { id: string }) =>
       prisma.employee.findUnique({ where: { id: args.id } }),
+
     employees: async (
       _: unknown,
-      args: { departmentId?: string; status?: 'ACTIVE' | 'INACTIVE' },
-    ) =>
-      prisma.employee.findMany({
-        where: {
-          ...(args.departmentId ? { departmentId: args.departmentId } : {}),
-          ...(args.status ? { status: args.status } : {}),
-        },
-        orderBy: { createdAt: 'desc' },
-      }),
+      args: {
+        departmentId?: string;
+        status?: 'ACTIVE' | 'INACTIVE';
+        page?: number;
+        pageSize?: number;
+        search?: string;
+      },
+    ) => {
+      const page = Math.max(1, args.page ?? 1);
+      const pageSize = Math.min(100, Math.max(1, args.pageSize ?? 10));
+      const skip = (page - 1) * pageSize;
+
+      const where: any = {
+        ...(args.departmentId ? { departmentId: args.departmentId } : {}),
+        ...(args.status ? { status: args.status } : {}),
+        ...(args.search?.trim()
+          ? {
+              OR: [
+                { firstName: { contains: args.search, mode: 'insensitive' } },
+                { lastName: { contains: args.search, mode: 'insensitive' } },
+                { email: { contains: args.search, mode: 'insensitive' } },
+                { regNo: { contains: args.search, mode: 'insensitive' } },
+                { position: { contains: args.search, mode: 'insensitive' } },
+              ],
+            }
+          : {}),
+      };
+
+      const [total, items] = await prisma.$transaction([
+        prisma.employee.count({ where }),
+        prisma.employee.findMany({
+          where,
+          skip,
+          take: pageSize,
+          orderBy: { createdAt: 'desc' },
+        }),
+      ]);
+
+      return { items, total, page, pageSize };
+    },
 
     bankAccount: async (_: unknown, args: { id: string }) =>
       prisma.employeeBankAccount.findUnique({ where: { id: args.id } }),
@@ -544,7 +589,15 @@ const resolvers = {
             action: 'EMPLOYEE_CREATED',
             entityType: 'Employee',
             entityId: employee.id,
-            metadata: { departmentId: employee.departmentId },
+            metadata: {
+              departmentId: employee.departmentId,
+              employeeId: employee.id,
+              employeeFirstName: employee.firstName,
+              employeeLastName: employee.lastName,
+              employeeRegNo: employee.regNo,
+              employeeEmail: employee.email,
+              position: employee.position,
+            },
           },
         });
 
@@ -594,7 +647,14 @@ const resolvers = {
             action: 'EMPLOYEE_UPDATED',
             entityType: 'Employee',
             entityId: updated.id,
-            metadata: i,
+            metadata: {
+              ...i,
+              employeeId: updated.id,
+              employeeFirstName: updated.firstName,
+              employeeLastName: updated.lastName,
+              employeeRegNo: updated.regNo,
+              employeeEmail: updated.email,
+            },
           },
         });
 
@@ -618,7 +678,14 @@ const resolvers = {
             action: 'EMPLOYEE_DEACTIVATED',
             entityType: 'Employee',
             entityId: updated.id,
-            metadata: { status: 'INACTIVE' },
+            metadata: {
+              status: 'INACTIVE',
+              employeeId: updated.id,
+              employeeFirstName: updated.firstName,
+              employeeLastName: updated.lastName,
+              employeeRegNo: updated.regNo,
+              employeeEmail: updated.email,
+            },
           },
         });
 
