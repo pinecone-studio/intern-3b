@@ -17,7 +17,7 @@ type LessonCardProps = {
 
 const DEFAULT_AVATAR =
   'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wCEAAkGBxITEhUTExMWFhUXGBcXGBgYFx0gGhsXGRgdHRgeHSAYHSggGxolHRodITEhJykrLi4uGh8zODMtNygtLisBCgoKDg0OGxAQGy0lICUtLS0tNTUtLS0vLy0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLS0tLf/AABEIAOEA4QMBEQACEQEDEQH/xAAcAAABBAMBAAAAAAAAAAAAAAAEAgMFBgABBwj/xABKEAACAAMFBAYGBwUGBQUBAAABAgADEQQFEiExBkFRYRMicYGRoQcyUrHB8BQVQmJyktEjgqLS4RYzQ3Oy8SRTY5PCFzQ2VLMI/8QAGwEAAgMBAQEAAAAAAAAAAAAAAgMAAQQFBgf/xAA5EQACAQIEAggGAQIGAwEAAAAAAQIDEQQSITFBUQUTImFxgaHwFDKRscHR4QbxIzNCUmKSFXKiY//aAAwDAQACEQMRAD8A...'; // (Чиний base64 урт байсан тул энд “...” гэж богиносголоо)
-// ⚠️ Чи өөрийнхөө бүтэн base64-аа энд paste хийгээд “...” хэсгийг солиход болно.
+
 
 function formatDate(d?: string | Date | null) {
   if (!d) return '-';

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react';
-import { Button } from "@headlessui/react";
 import { X, BookPlus, GraduationCap, Calendar, Layout } from 'lucide-react';
 
 interface Props {

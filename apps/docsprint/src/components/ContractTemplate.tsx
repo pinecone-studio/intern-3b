@@ -165,7 +165,6 @@ export default function ContractTemplate() {
         current = next;
       }
     }
-
     if (current.trim().length) result.push(current.trimEnd());
     return result.length ? result : [''];
   };

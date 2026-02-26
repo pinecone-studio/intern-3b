@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { Prisma } from "../../../generated/prisma";
+import { prisma } from '../../../lib/prisma';
 
 export async function GET() {
   try {
@@ -43,7 +43,7 @@ export async function POST(request: Request) {
         lessonId,
         password,
         schoolId,
-        number: number ? parseInt(number.toString()) : null,
+        number,
       },
     });
 

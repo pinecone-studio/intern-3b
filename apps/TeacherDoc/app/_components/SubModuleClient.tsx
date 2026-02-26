@@ -1,9 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import AddButton from '@/app/_components/AddLessonBtn';
 import { BookOpen, Sparkles, Loader2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import AddButton from './AddLessonBtn';
 
 type Teacher = { id: string; name: string };
 

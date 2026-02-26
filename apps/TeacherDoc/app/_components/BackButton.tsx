@@ -1,7 +1,7 @@
 'use client';
 
-import { Button } from '@/app/_components/ui/buttton';
 import { useRouter } from 'next/navigation';
+import { Button } from './ui/buttton';
 
 export default function BackButton() {
   const router = useRouter();

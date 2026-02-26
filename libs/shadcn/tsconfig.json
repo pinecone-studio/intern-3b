@@ -1,13 +1,7 @@
 {
   "extends": "../../../tsconfig.base.json",
-  "files": [],
-  "include": ["src/**/*"],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
-  ]
+  "files": ["next-env.d.ts"],
+  "include": ["next-env.d.ts", "app/**/*", "src/**/*", "**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", ".next", "dist"],
+  "references": [{ "path": "./tsconfig.lib.json" }]
 }
