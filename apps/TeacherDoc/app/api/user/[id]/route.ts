@@ -1,10 +1,11 @@
-import { NextResponse } from 'next/server';
-import { Prisma } from '@prisma/client';
-import { prisma } from '@/lib/prisma';
+import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '../../../../generated/prisma';
+import { prisma } from '../../../../lib/prisma';
 
-// --- DELETE: Delete user by ID ---
+export const runtime = 'nodejs';
+
 export async function DELETE(
-  request: Request,
+  _request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
@@ -15,19 +16,17 @@ export async function DELETE(
     });
 
     return NextResponse.json(
-      {
-        data: deleteUser,
-        message: 'User deleted successfully',
-      },
+      { data: deleteUser, message: 'User deleted successfully' },
       { status: 200 },
     );
   } catch (error: unknown) {
     console.error('Delete Error:', error);
 
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2025') {
-        return NextResponse.json({ error: 'User not found' }, { status: 404 });
-      }
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2025'
+    ) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
     return NextResponse.json(
@@ -38,15 +37,27 @@ export async function DELETE(
 }
 
 export async function PATCH(
-  request: Request,
+  request: NextRequest,
   { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const { id } = await params;
     const body = await request.json();
 
-    if (body.number) {
-      body.number = parseInt(body.number.toString());
+    // number parse (nullable/required аль нь ч байсан safe)
+    if (
+      body.number !== undefined &&
+      body.number !== null &&
+      body.number !== ''
+    ) {
+      const n = Number(body.number);
+      if (!Number.isInteger(n)) {
+        return NextResponse.json({ error: 'Invalid number' }, { status: 400 });
+      }
+      body.number = n;
+    } else {
+      // Хэрвээ schema дээр number REQUIRED байвал энэ мөрийг УСТГА (null өгч болохгүй)
+      delete body.number;
     }
 
     const updateUser = await prisma.user.update({
@@ -55,22 +66,20 @@ export async function PATCH(
     });
 
     return NextResponse.json(
-      {
-        data: updateUser,
-        message: 'User updated successfully',
-      },
+      { data: updateUser, message: 'User updated successfully' },
       { status: 200 },
     );
   } catch (error: unknown) {
     console.error('Update Error:', error);
 
-    if (error instanceof Prisma.PrismaClientKnownRequestError) {
-      if (error.code === 'P2002') {
-        return NextResponse.json(
-          { error: 'The provided number is already in use' },
-          { status: 400 },
-        );
-      }
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2002'
+    ) {
+      return NextResponse.json(
+        { error: 'The provided number is already in use' },
+        { status: 400 },
+      );
     }
 
     return NextResponse.json(

@@ -1,6 +1,5 @@
 'use client';
 import { useState } from 'react';
-import { Button } from '@intern-3b/shadcn';
 import { Plus } from 'lucide-react';
 
 interface Props {

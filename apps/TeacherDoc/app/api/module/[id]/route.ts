@@ -1,54 +1,66 @@
-import { prisma } from '@/lib/prisma';
-import { NextResponse } from 'next/server';
+import { prisma } from '../../../../lib/prisma';
+import { NextRequest, NextResponse } from 'next/server';
+import { Prisma } from '../../../../generated/prisma';
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: { id: string } },
-) {
-  try {
-    const { id } = params;
-    const deleteModule = await prisma.module.delete({
-      where: { id },
-    });
-    return NextResponse.json(deleteModule, { status: 200 });
-  } catch (error) {
-    return NextResponse.json(
-      { error: 'Failed to delete module' },
-      { status: 500 },
-    );
-  }
-}
+export const runtime = 'nodejs';
 
 export async function PATCH(
-  request: Request,
-  { params }: { params: { id: string } },
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
-    const { id } = params;
+    const { id } = await params;
     const body = await request.json();
 
-    const updateModule = await prisma.module.update({
+    const updatedSubModule = await prisma.subModule.update({
       where: { id },
       data: body,
     });
-    return NextResponse.json(updateModule, { status: 200 });
-  } catch (error) {
+
     return NextResponse.json(
-      { error: 'Failed to update module' },
+      { data: updatedSubModule, message: 'Submodule updated successfully' },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error('Update SubModule Error:', error);
+    return NextResponse.json(
+      { error: 'Failed to update submodule' },
       { status: 500 },
     );
   }
 }
 
-export async function GET(request: Request, { params }: { params: { id: string } }) {
-  const { id } = params;
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ id: string }> },
+) {
   try {
-    const module = await prisma.module.findUnique({
+    const { id } = await params;
+
+    const deletedSubModule = await prisma.subModule.delete({
       where: { id },
-      include: { subModules: true },
     });
-    return NextResponse.json(module);
-  } catch (err) {
-    return NextResponse.json({ error: 'Failed to fetch module' }, { status: 500 });
+
+    return NextResponse.json(
+      { data: deletedSubModule, message: 'Submodule deleted successfully' },
+      { status: 200 },
+    );
+  } catch (error) {
+    console.error('Delete SubModule Error:', error);
+
+    if (
+      error instanceof Prisma.PrismaClientKnownRequestError &&
+      error.code === 'P2025'
+    ) {
+      return NextResponse.json(
+        { error: 'Submodule not found' },
+        { status: 404 },
+      );
+    }
+
+    return NextResponse.json(
+      { error: 'Failed to delete submodule' },
+      { status: 500 },
+    );
   }
 }

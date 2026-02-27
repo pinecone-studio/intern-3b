@@ -1,6 +1,6 @@
-import { prisma } from '@/lib/prisma';
-import SubModuleClient from '@/app/_components/SubModuleClient';
+import { prisma } from '../../../lib/prisma';
 import { notFound } from 'next/navigation';
+import SubModuleClient from '../../_components/SubModuleClient';
 
 export default async function SubModulePage({
   params,

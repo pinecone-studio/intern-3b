@@ -24,11 +24,6 @@ export default function SignInSchoolForm() {
       return;
     }
     setLoading(true);
-    //Yg ene hesegt db ruu nemdeg logic orj irne e.g axiosInstance
-
-    // await new Promise((resolve) => setTimeout(resolve, 1500));
-    // console.log('Sign up:', formData);
-    // setLoading(false);
   };
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => {

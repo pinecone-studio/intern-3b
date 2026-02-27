@@ -1,10 +1,8 @@
 'use client';
 
 import { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import FormInput from '../_components/FormInput';
 import FormButton from '../_components/FormButton';
-
 
 type Teacher = {
   id: string;
@@ -14,7 +12,6 @@ type Teacher = {
 };
 
 export default function SchoolPage() {
-  const router = useRouter();
   const [teachers, setTeachers] = useState<Teacher[]>([]);
   const [loading, setLoading] = useState(false);
   const [newTeacher, setNewTeacher] = useState({ name: '', number: '' });
@@ -27,49 +24,46 @@ export default function SchoolPage() {
     fetchTeachers();
   }, []);
 
-const fetchTeachers = async () => {
-  try {
-    const res = await fetch(`/api/school/teachers?schoolId=${schoolId}`);
-    if (!res.ok) {
-      const error = await res.json();
-      alert(error.message);
-      return;
-    }
-    const data = await res.json();
-    setTeachers(data);
-  } catch (err: any) {
-    alert('Сервертэй холбогдож чадсангүй: ' + err.message);
-  }
-};
-
-
- const handleAddTeacher = async (e: React.FormEvent) => {
-  e.preventDefault();
-  setLoading(true);
-
-  try {
-    const res = await fetch('/api/school/addTeacher', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ ...newTeacher, schoolId }),
-    });
-
-    if (!res.ok) {
-      const error = await res.json();
-      alert(error.message);
-    } else {
+  const fetchTeachers = async () => {
+    try {
+      const res = await fetch(`/api/school/teachers?schoolId=${schoolId}`);
+      if (!res.ok) {
+        const error = await res.json();
+        alert(error.message);
+        return;
+      }
       const data = await res.json();
-      alert('Багш амжилттай нэмэгдлээ 🎉');
-      setNewTeacher({ name: '', number: '' });
-      fetchTeachers();
+      setTeachers(data);
+    } catch (err: any) {
+      alert('Сервертэй холбогдож чадсангүй: ' + err.message);
     }
-  } catch (err: any) {
-    alert('Сервертэй холбогдож чадсангүй: ' + err.message);
-  }
+  };
 
-  setLoading(false);
-};
+  const handleAddTeacher = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setLoading(true);
 
+    try {
+      const res = await fetch('/api/school/addTeacher', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ ...newTeacher, schoolId }),
+      });
+
+      if (!res.ok) {
+        const error = await res.json();
+        alert(error.message);
+      } else {
+        alert('Багш амжилттай нэмэгдлээ 🎉');
+        setNewTeacher({ name: '', number: '' });
+        fetchTeachers();
+      }
+    } catch (err: any) {
+      alert('Сервертэй холбогдож чадсангүй: ' + err.message);
+    }
+
+    setLoading(false);
+  };
 
   const handlePromote = async (teacherId: string) => {
     const res = await fetch('/api/school/change-role', {

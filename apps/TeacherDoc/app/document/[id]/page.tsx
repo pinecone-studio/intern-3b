@@ -1,12 +1,14 @@
-import BackButton from '@/app/_components/BackButton';
-import { prisma } from '@/lib/prisma';
+import { prisma } from '../../../lib/prisma';
+import BackButton from '../../_components/BackButton';
+
+export const runtime = 'nodejs'; // pg/prisma нь Edge дээр ажиллахгүй
 
 export default async function DocumentDetailPage({
   params,
 }: {
-  params: Promise<{ id: string }>;
+  params: { id: string };
 }) {
-  const { id } = await params;
+  const { id } = params;
 
   const doc = await prisma.document.findUnique({
     where: { id },
@@ -32,12 +34,12 @@ export default async function DocumentDetailPage({
           <div className="mt-6 h-px bg-linear-to-r from-emerald-100 via-slate-100 to-orange-100" />
 
           <div
-            className="prose prose-slate max-w-none mt-6 prose-p:leading-relaxed prose-a:text-emerald-700"
+            className="prose prose-slate mt-6 max-w-none prose-p:leading-relaxed prose-a:text-emerald-700"
             dangerouslySetInnerHTML={{ __html: doc.richText }}
           />
 
           {doc.image?.map((url: string) => (
-            <img key={Math.random()} src={url} />
+            <img key={url} src={url} alt="" />
           ))}
         </div>
       </div>

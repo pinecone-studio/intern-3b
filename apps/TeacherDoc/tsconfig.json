@@ -29,8 +29,6 @@
     "app/**/*.js",
     "app/**/*.jsx",
     "lib/prisma.ts",
-    "../../apps/TeacherDoc/.next/types/**/*.ts",
-    "../../dist/apps/TeacherDoc/.next/types/**/*.ts",
     "next-env.d.ts"
   ],
   "exclude": [
