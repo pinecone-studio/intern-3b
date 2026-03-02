@@ -23,6 +23,7 @@ export default function ProfilePage() {
   const router = useRouter();
   const [auth, setAuth] = useState<Auth | null>(null);
   const [activeTab, setActiveTab] = useState('info');
+  
 
   useEffect(() => {
     const stored = localStorage.getItem('auth');
