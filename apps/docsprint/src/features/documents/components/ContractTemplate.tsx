@@ -10,7 +10,17 @@ import {
   Plus,
   Save,
   Printer,
+  type LucideIcon,
 } from 'lucide-react';
+
+type TemplateId = 'employment' | 'nda' | 'job_desc' | 'trial';
+
+type TemplateOption = {
+  id: TemplateId;
+  name: string;
+  icon: LucideIcon;
+  content: string;
+};
 
 const templateOptions = [
   {
@@ -110,9 +120,7 @@ const templateOptions = [
 Албан тушаал: ____________________
 Гарын үсэг: _____________________`,
   },
-] as const;
-
-type TemplateId = (typeof templateOptions)[number]['id'];
+] satisfies TemplateOption[];
 
 export default function ContractTemplate() {
   const [selectedId, setSelectedId] = useState<TemplateId>('employment');
