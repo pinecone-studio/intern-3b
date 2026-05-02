@@ -13,6 +13,7 @@ import {
   MousePointer2,
   ChevronRight,
 } from 'lucide-react';
+import AddEmployeeSection from '../AddEmployeeSection';
 
 export function Hero() {
   return (
@@ -73,6 +74,8 @@ export function Hero() {
               </Button>
             </Link>
           </div>
+
+          <AddEmployeeSection />
         </div>
 
         <div className="mt-32 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 animate-in fade-in slide-in-from-bottom-12 duration-1000 delay-700">

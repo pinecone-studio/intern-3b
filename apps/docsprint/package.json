@@ -3,8 +3,10 @@
   "version": "0.0.1",
   "private": true,
   "dependencies": {
+    "@apollo/client": "^4.1.6",
     "@radix-ui/react-menubar": "^1.1.16",
     "@radix-ui/react-select": "^2.2.6",
+    "graphql": "^16.13.1",
     "html2canvas": "^1.4.1",
     "html2pdf.js": "^0.14.0",
     "jspdf": "^4.1.0",
