@@ -14,15 +14,16 @@ import {
   Calendar,
   Download,
   Printer,
+  type LucideIcon,
 } from 'lucide-react';
 import { useLazyQuery, useQuery } from '@apollo/client/react';
 
-import { AddEmployeeDialog } from './AddEmployes';
-import { Dialog, DialogContent } from './ui/dialog';
-import { AddEmployeeForm } from './AddEmployeeForm';
-import { Button } from './ui/button';
+import { AddEmployeeForm } from '@/components/AddEmployeeForm';
+import { AddEmployeeDialog } from '@/components/AddEmployes';
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-import { EMPLOYEE, GET_EMPLOYEES_PAGE } from '../app/api/graphql/queries';
+import { EMPLOYEE, GET_EMPLOYEES_PAGE } from '@/app/api/graphql/queries';
 
 type UIEmployee = {
   id: string;
@@ -55,6 +56,12 @@ type EmployeesPage = {
 };
 
 type ContractType = 'employment' | 'nda' | 'liability' | 'probation';
+
+type ContractOption = {
+  title: string;
+  value: ContractType;
+  icon: LucideIcon;
+};
 
 type FormState = {
   lastName: string;
@@ -91,6 +98,29 @@ const initialForm: FormState = {
   accountHolder: '',
   contractType: 'employment',
 };
+
+const CONTRACT_TYPE_OPTIONS: ContractOption[] = [
+  {
+    title: 'Хөдөлмөрийн гэрээ',
+    value: 'employment',
+    icon: FileText,
+  },
+  {
+    title: 'Нууц хадгалах',
+    value: 'nda',
+    icon: ShieldCheck,
+  },
+  {
+    title: 'Хариуцлагын гэрээ',
+    value: 'liability',
+    icon: Briefcase,
+  },
+  {
+    title: 'Тушаал',
+    value: 'probation',
+    icon: Calendar,
+  },
+];
 
 type EmployeeFull = {
   employee: {
@@ -567,20 +597,7 @@ export default function Employees() {
                   </p>
                 </div>
 
-                {[
-                  {
-                    title: 'Хөдөлмөрийн гэрээ',
-                    value: 'employment',
-                    icon: FileText,
-                  },
-                  { title: 'Нууц хадгалах', value: 'nda', icon: ShieldCheck },
-                  {
-                    title: 'Хариуцлагын гэрээ',
-                    value: 'liability',
-                    icon: Briefcase,
-                  },
-                  { title: 'Тушаал', value: 'probation', icon: Calendar },
-                ].map((c) => {
+                {CONTRACT_TYPE_OPTIONS.map((c) => {
                   const active = form.contractType === c.value;
                   const Icon = c.icon;
                   return (

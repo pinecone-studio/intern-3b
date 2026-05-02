@@ -1,6 +1,6 @@
 'use client';
 
-import { useMemo, useState } from 'react';
+import { useMemo, useState, type MouseEvent } from 'react';
 import { useQuery } from '@apollo/client/react';
 import {
   Search,
@@ -16,7 +16,7 @@ import {
   MenubarItem,
   MenubarMenu,
   MenubarTrigger,
-} from './ui/menubar';
+} from '@/components/ui/menubar';
 
 import {
   Pagination,
@@ -25,9 +25,9 @@ import {
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
-} from './ui/pagination';
+} from '@/components/ui/pagination';
 
-import { GET_AUDIT_LOGS } from '../app/api/graphql/queries';
+import { GET_AUDIT_LOGS } from '@/app/api/graphql/queries';
 
 type AuditLog = {
   id: string;
@@ -45,6 +45,22 @@ type AuditLog = {
 };
 
 const PAGE_SIZE = 10;
+const ACTION_FILTERS = [
+  'Бүх үйлдэл',
+  'Үүсгэсэн',
+  'Шинэчилсэн',
+  'Устгасан',
+  'Үзсэн',
+] as const;
+const TYPE_FILTERS = [
+  'Бүх төрөл',
+  'Ажилтан',
+  'Баримт',
+  'Хэрэглэгч',
+] as const;
+
+type ActionFilter = (typeof ACTION_FILTERS)[number] | 'Үйлдэл';
+type TypeFilter = (typeof TYPE_FILTERS)[number] | 'Төрөл';
 
 function formatDate(iso: string) {
   const d = new Date(iso);
@@ -120,12 +136,9 @@ function detailText(log: any) {
 
 export default function History() {
   const [search, setSearch] = useState('');
-  const [actionFilter, setActionFilter] = useState('Үйлдэл');
-  const [typeFilter, setTypeFilter] = useState('Төрөл');
+  const [actionFilter, setActionFilter] = useState<ActionFilter>('Үйлдэл');
+  const [typeFilter, setTypeFilter] = useState<TypeFilter>('Төрөл');
   const [page, setPage] = useState(1);
-
-  const actions = ['Бүх үйлдэл', 'Үүсгэсэн', 'Шинэчилсэн', 'Устгасан', 'Үзсэн'];
-  const types = ['Бүх төрөл', 'Ажилтан', 'Баримт', 'Хэрэглэгч'];
 
   const actionArg = useMemo(() => {
     if (actionFilter === 'Үйлдэл' || actionFilter === 'Бүх үйлдэл') return null;
@@ -209,7 +222,7 @@ export default function History() {
                   <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                 </MenubarTrigger>
                 <MenubarContent className="bg-white border-slate-200 rounded-xl p-1 shadow-xl">
-                  {actions.map((act) => (
+                  {ACTION_FILTERS.map((act) => (
                     <MenubarItem
                       key={act}
                       onClick={() => {
@@ -233,7 +246,7 @@ export default function History() {
                   <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
                 </MenubarTrigger>
                 <MenubarContent className="bg-white border-slate-200 rounded-xl p-1 shadow-xl">
-                  {types.map((t) => (
+                  {TYPE_FILTERS.map((t) => (
                     <MenubarItem
                       key={t}
                       onClick={() => {
@@ -368,7 +381,7 @@ export default function History() {
               <PaginationItem>
                 <PaginationPrevious
                   href="#"
-                  onClick={(e) => {
+                  onClick={(e: MouseEvent<HTMLAnchorElement>) => {
                     e.preventDefault();
                     if (hasPrev) setPage((p) => p - 1);
                   }}
@@ -380,7 +393,9 @@ export default function History() {
               <PaginationItem>
                 <PaginationLink
                   href="#"
-                  onClick={(e) => e.preventDefault()}
+                  onClick={(e: MouseEvent<HTMLAnchorElement>) =>
+                    e.preventDefault()
+                  }
                   isActive
                 >
                   {page}
@@ -390,7 +405,7 @@ export default function History() {
               <PaginationItem>
                 <PaginationNext
                   href="#"
-                  onClick={(e) => {
+                  onClick={(e: MouseEvent<HTMLAnchorElement>) => {
                     e.preventDefault();
                     if (hasNext) setPage((p) => p + 1);
                   }}
