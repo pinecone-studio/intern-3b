@@ -216,7 +216,7 @@ const typeDefs = `#graphql
     contractType: ContractType!
     contractEndDate: DateTime
     salary: Float
-    createdById: String!
+    createdById: String
   }
   input UpdateEmployeeInput {
     departmentId: String
@@ -251,7 +251,7 @@ const typeDefs = `#graphql
     employeeId: String!
     docType: DocType!
     filePath: String!
-    generatedById: String!
+    generatedById: String
   }
 
   input CreateAuditLogInput {
@@ -277,8 +277,8 @@ const typeDefs = `#graphql
 
     # Employee
     createEmployee(input: CreateEmployeeInput!): Employee!
-    updateEmployee(id: ID!, input: UpdateEmployeeInput!, auditUserId: String!): Employee!
-    deactivateEmployee(id: ID!, auditUserId: String!): Employee!
+    updateEmployee(id: ID!, input: UpdateEmployeeInput!, auditUserId: String): Employee!
+    deactivateEmployee(id: ID!, auditUserId: String): Employee!
 
     # Bank accounts
     createEmployeeBankAccount(input: CreateEmployeeBankAccountInput!): EmployeeBankAccount!
@@ -288,12 +288,36 @@ const typeDefs = `#graphql
 
     # Documents
     createGeneratedDocument(input: CreateGeneratedDocumentInput!): GeneratedDocument!
-    logDocumentDownload(documentId: ID!, userId: String!, metadata: JSON): AuditLog!
+    logDocumentDownload(documentId: ID!, userId: String, metadata: JSON): AuditLog!
 
     # Audit log (manual)
     createAuditLog(input: CreateAuditLogInput!): AuditLog!
   }
 `;
+
+const DEFAULT_ADMIN_EMAIL = 'admin@docsprint.local';
+
+async function resolveActorId(actorId: unknown, db: any = prisma) {
+  const id = typeof actorId === 'string' ? actorId.trim() : '';
+
+  if (id) {
+    const existing = await db.user.findUnique({ where: { id } });
+    if (existing) return existing.id;
+  }
+
+  const defaultUser = await db.user.upsert({
+    where: { email: DEFAULT_ADMIN_EMAIL },
+    update: { isActive: true },
+    create: {
+      email: DEFAULT_ADMIN_EMAIL,
+      passwordHash: 'system-seeded-user',
+      role: 'ADMIN',
+      isActive: true,
+    },
+  });
+
+  return defaultUser.id as string;
+}
 
 function toISO(value: unknown): string | null {
   if (!value) return null;
@@ -565,6 +589,8 @@ const resolvers = {
       const i = args.input;
 
       return prisma.$transaction(async (tx) => {
+        const createdById = await resolveActorId(i.createdById, tx);
+
         const employee = await tx.employee.create({
           data: {
             departmentId: i.departmentId,
@@ -579,13 +605,13 @@ const resolvers = {
               ? new Date(i.contractEndDate)
               : null,
             salary: i.salary ?? null,
-            createdById: i.createdById,
+            createdById,
           },
         });
 
         await tx.auditLog.create({
           data: {
-            userId: i.createdById,
+            userId: createdById,
             action: 'EMPLOYEE_CREATED',
             entityType: 'Employee',
             entityId: employee.id,
@@ -607,11 +633,13 @@ const resolvers = {
 
     updateEmployee: async (
       _: unknown,
-      args: { id: string; input: any; auditUserId: string },
+      args: { id: string; input: any; auditUserId?: string },
     ) => {
       const i = args.input;
 
       return prisma.$transaction(async (tx) => {
+        const auditUserId = await resolveActorId(args.auditUserId, tx);
+
         const updated = await tx.employee.update({
           where: { id: args.id },
           data: {
@@ -643,7 +671,7 @@ const resolvers = {
 
         await tx.auditLog.create({
           data: {
-            userId: args.auditUserId,
+            userId: auditUserId,
             action: 'EMPLOYEE_UPDATED',
             entityType: 'Employee',
             entityId: updated.id,
@@ -664,9 +692,11 @@ const resolvers = {
 
     deactivateEmployee: async (
       _: unknown,
-      args: { id: string; auditUserId: string },
+      args: { id: string; auditUserId?: string },
     ) =>
       prisma.$transaction(async (tx) => {
+        const auditUserId = await resolveActorId(args.auditUserId, tx);
+
         const updated = await tx.employee.update({
           where: { id: args.id },
           data: { status: 'INACTIVE' },
@@ -674,7 +704,7 @@ const resolvers = {
 
         await tx.auditLog.create({
           data: {
-            userId: args.auditUserId,
+            userId: auditUserId,
             action: 'EMPLOYEE_DEACTIVATED',
             entityType: 'Employee',
             entityId: updated.id,
@@ -774,18 +804,20 @@ const resolvers = {
       const i = args.input;
 
       return prisma.$transaction(async (tx) => {
+        const generatedById = await resolveActorId(i.generatedById, tx);
+
         const doc = await tx.generatedDocument.create({
           data: {
             employeeId: i.employeeId,
             docType: i.docType,
             filePath: i.filePath,
-            generatedById: i.generatedById,
+            generatedById,
           },
         });
 
         await tx.auditLog.create({
           data: {
-            userId: i.generatedById,
+            userId: generatedById,
             action: 'DOC_GENERATED',
             entityType: 'GeneratedDocument',
             entityId: doc.id,
@@ -803,16 +835,18 @@ const resolvers = {
 
     logDocumentDownload: async (
       _: unknown,
-      args: { documentId: string; userId: string; metadata?: any },
+      args: { documentId: string; userId?: string; metadata?: any },
     ) => {
       const doc = await prisma.generatedDocument.findUnique({
         where: { id: args.documentId },
       });
       if (!doc) throw new Error('GeneratedDocument not found');
 
+      const userId = await resolveActorId(args.userId);
+
       return prisma.auditLog.create({
         data: {
-          userId: args.userId,
+          userId,
           action: 'DOC_DOWNLOADED',
           entityType: 'GeneratedDocument',
           entityId: args.documentId,

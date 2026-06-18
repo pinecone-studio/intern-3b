@@ -16,14 +16,18 @@ import {
   Printer,
   type LucideIcon,
 } from 'lucide-react';
-import { useLazyQuery, useQuery } from '@apollo/client/react';
+import { useLazyQuery, useMutation, useQuery } from '@apollo/client/react';
 
 import { AddEmployeeForm } from '@/components/AddEmployeeForm';
 import { AddEmployeeDialog } from '@/components/AddEmployes';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 
-import { EMPLOYEE, GET_EMPLOYEES_PAGE } from '@/app/api/graphql/queries';
+import {
+  DEACTIVATE_EMPLOYEE,
+  EMPLOYEE,
+  GET_EMPLOYEES_PAGE,
+} from '@/app/api/graphql/queries';
 
 type UIEmployee = {
   id: string;
@@ -32,7 +36,7 @@ type UIEmployee = {
   role: string;
   department: string;
   salary: string;
-  status: 'active' | 'trial';
+  status: 'active' | 'inactive';
 };
 
 type GQLEmployee = {
@@ -156,8 +160,8 @@ function formatMNT(value: number | null | undefined) {
   }
 }
 
-function toUIStatus(status: 'ACTIVE' | 'INACTIVE'): 'active' | 'trial' {
-  return status === 'ACTIVE' ? 'active' : 'trial';
+function toUIStatus(status: 'ACTIVE' | 'INACTIVE'): 'active' | 'inactive' {
+  return status === 'ACTIVE' ? 'active' : 'inactive';
 }
 
 function mapToUIEmployee(e: GQLEmployee): UIEmployee {
@@ -214,6 +218,10 @@ export default function Employees() {
     fetchPolicy: 'network-only',
   });
 
+  const actorId = (process.env.NEXT_PUBLIC_CREATED_BY_ID || '').trim();
+  const [deactivateEmployee, { loading: deactivatingEmployee }] =
+    useMutation(DEACTIVATE_EMPLOYEE);
+
   const employees: UIEmployee[] = useMemo(() => {
     const items = data?.employees?.items ?? [];
     return items.map(mapToUIEmployee);
@@ -227,9 +235,26 @@ export default function Employees() {
     await refetch();
   };
 
-  const handleDeleteEmployee = async (_id: string) => {
+  const handleDeleteEmployee = async (id: string) => {
     setOpenMenuId(null);
-    await refetch();
+
+    const ok = window.confirm(
+      'Энэ ажилтныг идэвхгүй болгох уу? Мэдээлэл устахгүй, зөвхөн төлөв нь өөрчлөгдөнө.',
+    );
+    if (!ok) return;
+
+    try {
+      await deactivateEmployee({
+        variables: {
+          id,
+          auditUserId: actorId || undefined,
+        },
+      });
+      await refetch();
+    } catch (e: any) {
+      console.error(e);
+      alert(e?.message ?? 'Ажилтан идэвхгүй болгоход алдаа гарлаа.');
+    }
   };
 
   const contractRef = useRef<HTMLDivElement>(null);
@@ -409,12 +434,10 @@ export default function Employees() {
                         className={`px-3 py-1 rounded-lg text-[11px] font-bold border ${
                           emp.status === 'active'
                             ? 'bg-emerald-50 text-emerald-600 border-emerald-100'
-                            : 'bg-amber-50 text-amber-600 border-amber-100'
+                            : 'bg-slate-100 text-slate-500 border-slate-200'
                         }`}
                       >
-                        {emp.status === 'active'
-                          ? 'Үндсэн ажилтан'
-                          : 'ТУРШИЛТЫН'}
+                        {emp.status === 'active' ? 'Идэвхтэй' : 'Идэвхгүй'}
                       </span>
                     </td>
 
@@ -486,9 +509,10 @@ export default function Employees() {
 
                               <button
                                 onClick={() => handleDeleteEmployee(emp.id)}
+                                disabled={deactivatingEmployee}
                                 className="w-full text-left px-3 py-2 text-sm text-rose-500 hover:bg-rose-50 rounded-lg flex items-center gap-2 font-semibold transition-colors"
                               >
-                                <Trash2 className="h-4 w-4" /> Устгах
+                                <Trash2 className="h-4 w-4" /> Идэвхгүй болгох
                               </button>
                             </div>
                           </>
@@ -560,8 +584,13 @@ export default function Employees() {
                 startDate: safeDateOnly(editEmployee.startDate),
                 department: editEmployee.department?.name ?? '',
 
-                status: editEmployee.status === 'ACTIVE' ? 'active' : 'trial',
+                status:
+                  editEmployee.status === 'ACTIVE' ? 'active' : 'inactive',
+                contractType: editEmployee.contractType,
 
+                primaryBankAccountId: editEmployee.bankAccounts?.find(
+                  (b) => b.isPrimary,
+                )?.id,
                 bankName:
                   editEmployee.bankAccounts?.find((b) => b.isPrimary)
                     ?.bankName ?? '',
@@ -704,14 +733,6 @@ export default function Employees() {
                             <strong>{contractEmployee.department}</strong>{' '}
                             хэлтэст ажиллана.
                           </p>
-
-                          {contractEmployee.status === 'trial' && (
-                            <p>
-                              1.3 Ажилтан нь үндсэн ажилтнаар томилогдохоос өмнө{' '}
-                              <strong>3</strong> сарын туршилтын хугацаатай
-                              ажиллана.
-                            </p>
-                          )}
 
                           <h3 className="font-bold">
                             2. Цалин хөлс, нийгмийн баталгаа

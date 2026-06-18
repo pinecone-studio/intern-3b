@@ -181,3 +181,53 @@ export const CREATE_EMPLOYEE_BANK_ACCOUNT = gql`
     }
   }
 `;
+
+export const UPDATE_EMPLOYEE = gql`
+  mutation UpdateEmployee(
+    $id: ID!
+    $input: UpdateEmployeeInput!
+    $auditUserId: String
+  ) {
+    updateEmployee(id: $id, input: $input, auditUserId: $auditUserId) {
+      id
+      firstName
+      lastName
+      email
+      regNo
+      position
+      startDate
+      contractType
+      salary
+      status
+      department {
+        id
+        name
+      }
+    }
+  }
+`;
+
+export const DEACTIVATE_EMPLOYEE = gql`
+  mutation DeactivateEmployee($id: ID!, $auditUserId: String) {
+    deactivateEmployee(id: $id, auditUserId: $auditUserId) {
+      id
+      status
+    }
+  }
+`;
+
+export const UPDATE_EMPLOYEE_BANK_ACCOUNT = gql`
+  mutation UpdateEmployeeBankAccount(
+    $id: ID!
+    $input: UpdateEmployeeBankAccountInput!
+  ) {
+    updateEmployeeBankAccount(id: $id, input: $input) {
+      id
+      bankName
+      accountNo
+      accountHolder
+      isPrimary
+      employeeId
+    }
+  }
+`;
