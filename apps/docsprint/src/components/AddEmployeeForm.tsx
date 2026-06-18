@@ -27,6 +27,8 @@ import {
   CREATE_DEPARTMENT,
   CREATE_EMPLOYEE,
   CREATE_EMPLOYEE_BANK_ACCOUNT,
+  UPDATE_EMPLOYEE,
+  UPDATE_EMPLOYEE_BANK_ACCOUNT,
 } from '../app/api/graphql/queries';
 
 import { Button } from '../components/ui/button';
@@ -61,6 +63,7 @@ type FormState = {
   accountNo: string;
   accountHolder: string;
   contractType?: ContractTypeUI;
+  primaryBankAccountId?: string;
 };
 
 const initialForm: FormState = {
@@ -146,7 +149,10 @@ export function AddEmployeeForm({
         bankName: initialData.bankName || '',
         accountNo: initialData.accountNo || '',
         accountHolder: initialData.accountHolder || '',
-        contractType: initialData.contractTypeUI || initialForm.contractType,
+        primaryBankAccountId: initialData.primaryBankAccountId || undefined,
+        contractType:
+          initialData.contractTypeUI ||
+          (initialData.contractType === 'PROBATION' ? 'probation' : 'employment'),
       };
     }
     return initialForm;
@@ -164,6 +170,11 @@ export function AddEmployeeForm({
     useMutation(CREATE_EMPLOYEE);
   const [createBankAccount, { loading: creatingBank }] = useMutation(
     CREATE_EMPLOYEE_BANK_ACCOUNT,
+  );
+  const [updateEmployee, { loading: updatingEmployee }] =
+    useMutation(UPDATE_EMPLOYEE);
+  const [updateBankAccount, { loading: updatingBank }] = useMutation(
+    UPDATE_EMPLOYEE_BANK_ACCOUNT,
   );
 
   const contractRef = React.useRef<HTMLDivElement | null>(null);
@@ -216,6 +227,8 @@ export function AddEmployeeForm({
   };
 
   const CREATED_BY_ID = (process.env.NEXT_PUBLIC_CREATED_BY_ID || '').trim();
+  const mutationBusy =
+    creatingEmployee || creatingBank || updatingEmployee || updatingBank;
 
   async function getOrCreateDepartmentIdByName(name: string) {
     const trimmed = name.trim();
@@ -576,11 +589,6 @@ export function AddEmployeeForm({
       return;
     }
 
-    if (!CREATED_BY_ID) {
-      alert('NEXT_PUBLIC_CREATED_BY_ID тохируулаагүй байна.');
-      return;
-    }
-
     try {
       const departmentId = await getOrCreateDepartmentIdByName(form.department);
 
@@ -589,6 +597,71 @@ export function AddEmployeeForm({
         form.contractType!,
         form.isProbation,
       );
+
+      if (isEdit && form.id) {
+        const empRes = await updateEmployee({
+          variables: {
+            id: form.id,
+            auditUserId: CREATED_BY_ID || undefined,
+            input: {
+              departmentId,
+              firstName: form.firstName,
+              lastName: form.lastName,
+              email: form.email,
+              regNo: form.regNo,
+              position: form.position,
+              startDate: startDateIso,
+              contractType,
+              contractEndDate: null,
+            },
+          },
+        });
+
+        const updatedEmp = (empRes.data as any)?.updateEmployee;
+        if (!updatedEmp?.id) throw new Error('Employee шинэчилж чадсангүй.');
+
+        if (form.bankName.trim() && form.accountNo.trim()) {
+          const bankInput = {
+            bankName: form.bankName.trim(),
+            accountNo: form.accountNo.trim(),
+            accountHolder:
+              form.accountHolder.trim() ||
+              `${form.lastName} ${form.firstName}`.trim(),
+            isPrimary: true,
+          };
+
+          if (form.primaryBankAccountId) {
+            await updateBankAccount({
+              variables: {
+                id: form.primaryBankAccountId,
+                input: bankInput,
+              },
+            });
+          } else {
+            await createBankAccount({
+              variables: {
+                input: {
+                  employeeId: updatedEmp.id,
+                  ...bankInput,
+                },
+              },
+            });
+          }
+        }
+
+        onAdd({
+          id: updatedEmp.id,
+          name: `${updatedEmp.lastName} ${updatedEmp.firstName}`,
+          email: updatedEmp.email,
+          role: updatedEmp.position,
+          department: form.department,
+          salary: updatedEmp.salary ?? initialData?.salary ?? 'Тохиролцоно',
+          status: updatedEmp.status === 'ACTIVE' ? 'active' : 'inactive',
+        });
+
+        onClose();
+        return;
+      }
 
       const empRes = await createEmployee({
         variables: {
@@ -603,7 +676,7 @@ export function AddEmployeeForm({
             contractType,
             contractEndDate: null,
             salary: null,
-            createdById: CREATED_BY_ID,
+            createdById: CREATED_BY_ID || undefined,
           },
         },
       });
@@ -630,7 +703,7 @@ export function AddEmployeeForm({
         role: createdEmp.position,
         department: form.department,
         salary: 'Тохиролцоно',
-        status: createdEmp.status === 'ACTIVE' ? 'active' : 'trial',
+        status: createdEmp.status === 'ACTIVE' ? 'active' : 'inactive',
       });
 
       onClose();
@@ -1497,12 +1570,14 @@ export function AddEmployeeForm({
               type="button"
               className="min-w-[200px] h-14 rounded-2xl font-black bg-blue-600 hover:bg-blue-700 text-white border-b-4 border-blue-800"
               onClick={stepIndex < steps.length - 1 ? goNext : onSubmit}
-              disabled={!canGoNext || creatingEmployee || creatingBank}
+              disabled={!canGoNext || mutationBusy}
             >
               {stepIndex < steps.length - 1 ? (
                 <>
                   Үргэлжлүүлэх <ChevronRight className="h-5 w-5" />
                 </>
+              ) : mutationBusy ? (
+                'Хадгалж байна...'
               ) : (
                 <>
                   {isEdit ? 'Засварыг хадгалах' : 'Бүртгэлийг дуусгах'}{' '}
