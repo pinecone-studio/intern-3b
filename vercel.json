@@ -1,5 +1,6 @@
 {
-  "buildCommand": "yarn nx build $BUILD_APP",
-  "outputDirectory": "dist/apps/$BUILD_APP/.next",
-  "framework": "nextjs"
+  "buildCommand": "cd apps/docsprint && yarn prisma generate && cd ../.. && yarn nx build docsprint",
+  "outputDirectory": "dist/apps/docsprint/.next",
+  "framework": "nextjs",
+  "installCommand": "yarn install --frozen-lockfile"
 }
