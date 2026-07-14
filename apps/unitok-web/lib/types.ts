@@ -3,7 +3,7 @@ export type Course = {
   name: string;
   professor: string;
   rating: number;
-  reviewCount: number;
+  reviews: number | never[];
   semester: string;
 };
 
